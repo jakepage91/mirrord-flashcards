@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>mirrord flashcards</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #151c33;
+      --panel-2: #1b2340;
+      --text: #e8ecff;
+      --muted: #9fb0e6;
+      --accent: #6da7ff;
+      --ok: #4dd790;
+      --warn: #ffd166;
+      --danger: #ef6b8f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: linear-gradient(180deg, #090e1d, #0d1430 35%, #111a3f);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .container { max-width: 980px; margin: 0 auto; padding: 16px; }
+    .header {
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: center;
+      margin-bottom: 14px;
+    }
+    h1 { font-size: 1.32rem; margin: 0; }
+    .badge { color: var(--muted); font-size: .92rem; }
+    .card {
+      background: rgba(21, 28, 51, .94);
+      border: 1px solid rgba(109, 167, 255, .25);
+      border-radius: 16px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.35);
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .meta { color: var(--muted); font-size: .9rem; margin-bottom: 8px; }
+    .prompt { font-size: 1.15rem; line-height: 1.45; margin: 10px 0; }
+    .answer {
+      background: var(--panel-2);
+      border-radius: 12px;
+      padding: 12px;
+      line-height: 1.5;
+      display: none;
+      border: 1px solid rgba(159, 176, 230, .18);
+      margin-top: 10px;
+      white-space: pre-wrap;
+    }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    button, select, input, textarea {
+      border: 1px solid rgba(109, 167, 255, .35);
+      background: #15203f;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: .94rem;
+    }
+    textarea { width: 100%; min-height: 90px; resize: vertical; }
+    input { min-width: 180px; }
+    button { cursor: pointer; }
+    button.primary { background: #2254c9; border-color: #4f7fe4; }
+    button.good { background: #1e6a4a; border-color: #4dd790; }
+    button.hard { background: #5b4a1b; border-color: #ffd166; }
+    button.reset { background: #5c2230; border-color: #d0698a; }
+    button.ghost { background: #212c50; }
+    .small { font-size: .84rem; color: var(--muted); }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .chip {
+      border: 1px solid rgba(109, 167, 255, .35);
+      border-radius: 99px;
+      padding: 4px 8px;
+      font-size: .78rem;
+      color: #c8d6ff;
+      background: rgba(34,84,201,.18);
+    }
+    .footer { margin-top: 14px; color: var(--muted); font-size: .85rem; }
+    .hidden { display: none; }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .panel-title {
+      margin: 0 0 8px 0;
+      font-size: 1rem;
+    }
+    .muted { color: var(--muted); }
+    .danger { color: var(--danger); }
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      .prompt { font-size: 1.06rem; }
+      button { flex: 1 1 auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>mirrord deep-dive flashcards</h1>
+        <div class="badge">accurate feature coverage • spaced repetition • mobile-friendly</div>
+      </div>
+      <div class="row">
+        <button id="newModeBtn">Include new cards</button>
+        <button id="shuffleBtn" class="ghost">Shuffle queue</button>
+        <button id="exportBtn">Export progress</button>
+        <button id="exportDeckBtn" class="ghost">Export custom cards</button>
+      </div>
+    </div>
+
+    <div class="card" id="cardWrap">
+      <div class="meta" id="meta"></div>
+      <div class="prompt" id="front"></div>
+      <div class="answer" id="back"></div>
+      <div class="chips" id="tags"></div>
+      <div class="row">
+        <button class="primary" id="showBtn">Show answer</button>
+        <button class="hard hidden" id="againBtn">Again</button>
+        <button class="hard hidden" id="hardBtn">Hard</button>
+        <button class="good hidden" id="goodBtn">Good</button>
+        <button class="good hidden" id="easyBtn">Easy</button>
+      </div>
+      <div class="row" style="margin-top: 8px;">
+        <label for="tagFilter" class="small">Tag filter</label>
+        <select id="tagFilter"></select>
+        <label for="sourceFilter" class="small">Source</label>
+        <select id="sourceFilter">
+          <option value="all">all</option>
+          <option value="core">core deck</option>
+          <option value="custom">custom cards</option>
+        </select>
+      </div>
+      <div class="footer" id="status"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="panel-title">Add your own flashcard</h2>
+      <div class="small muted">Use this for upcoming features, customer objections, and your own demos. Cards are saved locally in your browser.</div>
+      <div class="grid" style="margin-top:10px;">
+        <div>
+          <label for="newFront" class="small">Question (front)</label>
+          <textarea id="newFront" placeholder="Example: Why use filtered steal instead of full steal in shared staging?"></textarea>
+        </div>
+        <div>
+          <label for="newBack" class="small">Answer (back)</label>
+          <textarea id="newBack" placeholder="Explain what + why + step-by-step behavior + safety tradeoff."></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <input id="newTags" placeholder="tags comma separated (policy,staging,devrel)" />
+        <select id="newDifficulty">
+          <option value="1">difficulty 1</option>
+          <option value="2" selected>difficulty 2</option>
+          <option value="3">difficulty 3</option>
+          <option value="4">difficulty 4</option>
+          <option value="5">difficulty 5</option>
+        </select>
+        <button id="addCardBtn" class="primary">Add card</button>
+      </div>
+      <div class="row">
+        <label for="importProgressInput" class="small">Import progress</label>
+        <input id="importProgressInput" type="file" accept="application/json" />
+        <label for="importDeckInput" class="small">Import custom cards</label>
+        <input id="importDeckInput" type="file" accept="application/json" />
+        <button id="resetBtn" class="reset">Reset progress</button>
+        <button id="clearCustomBtn" class="reset">Delete custom cards</button>
+      </div>
+      <div class="small danger" id="addCardStatus"></div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'mirrord_flashcards_progress_v2';
+    const PREFS_KEY = 'mirrord_flashcards_prefs_v2';
+    const CUSTOM_DECK_KEY = 'mirrord_flashcards_custom_cards_v1';
+
+    const state = {
+      baseCards: [],
+      customCards: [],
+      cards: [],
+      progress: {},
+      queue: [],
+      idx: 0,
+      includeNew: true,
+      tag: 'all',
+      source: 'all'
+    };
+
+    const el = {
+      meta: document.getElementById('meta'),
+      front: document.getElementById('front'),
+      back: document.getElementById('back'),
+      tags: document.getElementById('tags'),
+      showBtn: document.getElementById('showBtn'),
+      againBtn: document.getElementById('againBtn'),
+      hardBtn: document.getElementById('hardBtn'),
+      goodBtn: document.getElementById('goodBtn'),
+      easyBtn: document.getElementById('easyBtn'),
+      status: document.getElementById('status'),
+      exportBtn: document.getElementById('exportBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      newModeBtn: document.getElementById('newModeBtn'),
+      shuffleBtn: document.getElementById('shuffleBtn'),
+      tagFilter: document.getElementById('tagFilter'),
+      sourceFilter: document.getElementById('sourceFilter'),
+      importProgressInput: document.getElementById('importProgressInput'),
+      importDeckInput: document.getElementById('importDeckInput'),
+      exportDeckBtn: document.getElementById('exportDeckBtn'),
+      newFront: document.getElementById('newFront'),
+      newBack: document.getElementById('newBack'),
+      newTags: document.getElementById('newTags'),
+      newDifficulty: document.getElementById('newDifficulty'),
+      addCardBtn: document.getElementById('addCardBtn'),
+      addCardStatus: document.getElementById('addCardStatus'),
+      clearCustomBtn: document.getElementById('clearCustomBtn')
+    };
+
+    const todayStr = () => new Date().toISOString().slice(0, 10);
+    const plusDays = (d) => {
+      const x = new Date();
+      x.setDate(x.getDate() + d);
+      return x.toISOString().slice(0, 10);
+    };
+
+    function parseTags(raw) {
+      return (raw || '')
+        .split(',')
+        .map(t => t.trim().toLowerCase())
+        .filter(Boolean);
+    }
+
+    function defaultProgress(card) {
+      return { id: card.id, reps: 0, interval: 0, ease: 2.5, due: todayStr(), last: null };
+    }
+
+    function loadProgress() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      state.progress = raw ? JSON.parse(raw) : {};
+      for (const card of state.cards) {
+        if (!state.progress[card.id]) state.progress[card.id] = defaultProgress(card);
+      }
+      saveProgress();
+    }
+
+    function saveProgress() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.progress));
+    }
+
+    function loadPrefs() {
+      const raw = localStorage.getItem(PREFS_KEY);
+      if (!raw) return;
+      const p = JSON.parse(raw);
+      state.includeNew = p.includeNew ?? true;
+      state.tag = p.tag ?? 'all';
+      state.source = p.source ?? 'all';
+    }
+
+    function savePrefs() {
+      localStorage.setItem(PREFS_KEY, JSON.stringify({
+        includeNew: state.includeNew,
+        tag: state.tag,
+        source: state.source
+      }));
+    }
+
+    function loadCustomCards() {
+      const raw = localStorage.getItem(CUSTOM_DECK_KEY);
+      state.customCards = raw ? JSON.parse(raw) : [];
+    }
+
+    function saveCustomCards() {
+      localStorage.setItem(CUSTOM_DECK_KEY, JSON.stringify(state.customCards));
+    }
+
+    function rebuildCards() {
+      state.cards = [
+        ...state.baseCards.map(c => ({ ...c, source: 'core' })),
+        ...state.customCards.map(c => ({ ...c, source: 'custom' }))
+      ];
+    }
+
+    function isDue(p) {
+      return p.due <= todayStr();
+    }
+
+    function cardMatchesFilters(card) {
+      const tagOk = state.tag === 'all' || card.tags.includes(state.tag);
+      const sourceOk = state.source === 'all' || card.source === state.source;
+      return tagOk && sourceOk;
+    }
+
+    function buildQueue() {
+      const cards = state.cards.filter(cardMatchesFilters);
+      const due = cards.filter(c => isDue(state.progress[c.id]));
+      const unseen = cards.filter(c => state.progress[c.id].reps === 0);
+
+      state.queue = [...due];
+      if (state.includeNew) {
+        const unseenNotQueued = unseen.filter(c => !state.queue.some(q => q.id === c.id));
+        state.queue.push(...unseenNotQueued.slice(0, 16));
+      }
+
+      state.queue.sort((a, b) => state.progress[a.id].due.localeCompare(state.progress[b.id].due));
+      state.idx = 0;
+    }
+
+    function shuffleQueue() {
+      for (let i = state.queue.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [state.queue[i], state.queue[j]] = [state.queue[j], state.queue[i]];
+      }
+      state.idx = 0;
+    }
+
+    function renderTagFilter() {
+      const set = new Set(['all']);
+      state.cards.forEach(c => c.tags.forEach(t => set.add(t)));
+      el.tagFilter.innerHTML = '';
+      [...set].sort().forEach(tag => {
+        const opt = document.createElement('option');
+        opt.value = tag;
+        opt.textContent = tag;
+        opt.selected = tag === state.tag;
+        el.tagFilter.appendChild(opt);
+      });
+    }
+
+    function showCard() {
+      if (!state.queue.length) {
+        el.meta.textContent = 'Queue complete';
+        el.front.textContent = 'No cards due with this filter. Toggle "Include new cards" or adjust tag/source.';
+        el.back.style.display = 'none';
+        el.back.textContent = '';
+        el.tags.innerHTML = '';
+        hideGradeButtons();
+        el.status.textContent = summaryText();
+        return;
+      }
+
+      const card = state.queue[state.idx];
+      const p = state.progress[card.id];
+      el.meta.textContent = `${state.idx + 1}/${state.queue.length} • ${card.source} • due ${p.due} • reps ${p.reps} • ease ${p.ease.toFixed(2)}`;
+      el.front.textContent = card.front;
+      el.back.textContent = card.back;
+      el.back.style.display = 'none';
+      el.tags.innerHTML = [card.source, ...card.tags].map(t => `<span class="chip">${t}</span>`).join('');
+      hideGradeButtons();
+      el.showBtn.classList.remove('hidden');
+      el.status.textContent = summaryText();
+    }
+
+    function summaryText() {
+      const entries = Object.values(state.progress);
+      const due = entries.filter(isDue).length;
+      const learned = entries.filter(x => x.reps > 0).length;
+      return `Total ${entries.length} cards • Due ${due} • Learned ${learned} • Custom ${state.customCards.length}`;
+    }
+
+    function showGradeButtons() {
+      el.showBtn.classList.add('hidden');
+      [el.againBtn, el.hardBtn, el.goodBtn, el.easyBtn].forEach(b => b.classList.remove('hidden'));
+    }
+
+    function hideGradeButtons() {
+      [el.againBtn, el.hardBtn, el.goodBtn, el.easyBtn].forEach(b => b.classList.add('hidden'));
+    }
+
+    function gradeCard(grade) {
+      const card = state.queue[state.idx];
+      if (!card) return;
+      const p = state.progress[card.id];
+
+      if (grade === 'again') {
+        p.reps = 0;
+        p.interval = 0;
+        p.ease = Math.max(1.3, p.ease - 0.2);
+        p.due = plusDays(0);
+      } else {
+        p.reps += 1;
+        const q = grade === 'hard' ? 3 : grade === 'good' ? 4 : 5;
+        p.ease = Math.max(1.3, p.ease + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02)));
+
+        if (p.reps === 1) p.interval = grade === 'easy' ? 3 : 1;
+        else if (p.reps === 2) p.interval = grade === 'easy' ? 7 : 3;
+        else {
+          const mult = grade === 'hard' ? 1.2 : grade === 'easy' ? 1.6 : 1.4;
+          p.interval = Math.max(1, Math.round(p.interval * p.ease * mult));
+        }
+        p.due = plusDays(p.interval);
+      }
+
+      p.last = todayStr();
+      saveProgress();
+
+      state.queue.splice(state.idx, 1);
+      if (state.idx >= state.queue.length) state.idx = Math.max(0, state.queue.length - 1);
+      showCard();
+    }
+
+    function refreshAll() {
+      rebuildCards();
+      loadProgress();
+      renderTagFilter();
+      buildQueue();
+      updateButtons();
+      showCard();
+    }
+
+    function updateButtons() {
+      el.newModeBtn.textContent = state.includeNew ? 'Including new cards' : 'Review due only';
+      el.sourceFilter.value = state.source;
+    }
+
+    function addCustomCard() {
+      const front = el.newFront.value.trim();
+      const back = el.newBack.value.trim();
+      const tags = parseTags(el.newTags.value);
+      const difficulty = Number(el.newDifficulty.value || 2);
+      if (!front || !back) {
+        el.addCardStatus.textContent = 'Question and answer are both required.';
+        return;
+      }
+
+      const newCard = {
+        id: `custom-${Date.now()}`,
+        front,
+        back,
+        tags: tags.length ? tags : ['custom'],
+        difficulty
+      };
+
+      state.customCards.unshift(newCard);
+      saveCustomCards();
+      el.newFront.value = '';
+      el.newBack.value = '';
+      el.newTags.value = '';
+      el.newDifficulty.value = '2';
+      el.addCardStatus.textContent = 'Card added.';
+
+      refreshAll();
+    }
+
+    async function loadBaseCards() {
+      const res = await fetch('./cards.json');
+      state.baseCards = await res.json();
+    }
+
+    el.showBtn.addEventListener('click', () => {
+      el.back.style.display = 'block';
+      showGradeButtons();
+    });
+
+    el.againBtn.addEventListener('click', () => gradeCard('again'));
+    el.hardBtn.addEventListener('click', () => gradeCard('hard'));
+    el.goodBtn.addEventListener('click', () => gradeCard('good'));
+    el.easyBtn.addEventListener('click', () => gradeCard('easy'));
+
+    el.newModeBtn.addEventListener('click', () => {
+      state.includeNew = !state.includeNew;
+      savePrefs();
+      buildQueue();
+      updateButtons();
+      showCard();
+    });
+
+    el.shuffleBtn.addEventListener('click', () => {
+      shuffleQueue();
+      showCard();
+    });
+
+    el.tagFilter.addEventListener('change', (e) => {
+      state.tag = e.target.value;
+      savePrefs();
+      buildQueue();
+      showCard();
+    });
+
+    el.sourceFilter.addEventListener('change', (e) => {
+      state.source = e.target.value;
+      savePrefs();
+      buildQueue();
+      showCard();
+    });
+
+    el.exportBtn.addEventListener('click', () => {
+      const payload = { progress: state.progress, exportedAt: new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `mirrord-flashcards-progress-${todayStr()}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    el.exportDeckBtn.addEventListener('click', () => {
+      const payload = { customCards: state.customCards, exportedAt: new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `mirrord-flashcards-custom-cards-${todayStr()}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    el.importProgressInput.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const parsed = JSON.parse(await file.text());
+        if (!parsed.progress || typeof parsed.progress !== 'object') throw new Error('invalid');
+        state.progress = { ...state.progress, ...parsed.progress };
+        saveProgress();
+        buildQueue();
+        showCard();
+      } catch {
+        alert('Invalid progress file.');
+      }
+      e.target.value = '';
+    });
+
+    el.importDeckInput.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const parsed = JSON.parse(await file.text());
+        const cards = parsed.customCards || parsed.cards || [];
+        if (!Array.isArray(cards)) throw new Error('invalid');
+        const normalized = cards
+          .filter(c => c && c.front && c.back)
+          .map(c => ({
+            id: c.id || `custom-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            front: String(c.front).trim(),
+            back: String(c.back).trim(),
+            tags: Array.isArray(c.tags) && c.tags.length ? c.tags.map(t => String(t).toLowerCase()) : ['custom'],
+            difficulty: Number(c.difficulty || 2)
+          }));
+        state.customCards = [...normalized, ...state.customCards];
+        saveCustomCards();
+        refreshAll();
+      } catch {
+        alert('Invalid custom cards file.');
+      }
+      e.target.value = '';
+    });
+
+    el.addCardBtn.addEventListener('click', addCustomCard);
+
+    el.resetBtn.addEventListener('click', () => {
+      if (!confirm('Reset all progress?')) return;
+      state.progress = {};
+      loadProgress();
+      buildQueue();
+      showCard();
+    });
+
+    el.clearCustomBtn.addEventListener('click', () => {
+      if (!confirm('Delete all custom cards?')) return;
+      state.customCards = [];
+      saveCustomCards();
+      refreshAll();
+    });
+
+    (async function init() {
+      await loadBaseCards();
+      loadPrefs();
+      loadCustomCards();
+      refreshAll();
+    })();
+  </script>
+</body>
+</html>
