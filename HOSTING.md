@@ -1,50 +1,44 @@
 # Hosting plan
 
-This app is intentionally static (`index.html` + `cards.json`), so hosting is very simple.
+This app is static (`index.html` + `cards.json`), so host it as static files.
 
 ## Recommended default: GitHub Pages
 
 ### Why
-- Free and easy for internal/public docs-style projects.
-- No server runtime required.
-- Works well for mobile access via a normal URL.
+- Free and fast for this type of app
+- Easy URL sharing (including phone usage)
+- Works directly with repository workflows
 
-### What to host
-- `index.html`
-- `cards.json`
-- `README.md` (optional, for repo docs)
+### Deployment
+1. Push repo.
+2. Enable GitHub Pages with GitHub Actions.
+3. Use `.github/workflows/pages.yml`.
 
-### Deployment steps
-1. Push this repo to GitHub.
-2. In **Settings → Pages**, set source to **GitHub Actions**.
-3. Add the workflow in `.github/workflows/pages.yml` (included in this repo).
-4. After workflow succeeds, share the Pages URL.
+## GitHub OAuth + Discussions notes
 
-## Alternate options
+Because the app is static, it uses **GitHub OAuth Device Flow** in-browser:
+- Requires OAuth app with Device Flow enabled.
+- Uses Client ID (no client secret in frontend).
+- Stores user token in browser localStorage.
 
-### Netlify
-- Drag/drop deploy or connect repo.
-- Build command: none
-- Publish directory: repository root
+If your security posture requires not storing tokens in the browser, move this flow behind a backend service.
 
-### Vercel (static)
-- Import repo.
-- Framework preset: Other.
-- Build command: none
-- Output directory: `.`
+## Weekly review flow
 
-### S3 + CloudFront
-- Upload static files to S3 bucket.
-- Enable static website hosting + CloudFront for TLS/CDN.
+The workflow `.github/workflows/weekly-discussion-digest.yml` runs weekly and scans Discussions for titles containing `[card:`.
 
-## Operational guidance
+Output:
+- `weekly-discussion-digest.md` artifact with recent card-linked discussion status.
 
-- The app stores progress in browser `localStorage`, so progress is device/browser-local.
-- If you need cross-device continuity, use **Export progress** and **Import progress**.
-- If embedding in internal portals, ensure `cards.json` is served with `application/json`.
+This is the first step toward automatic actioning (open tasks, update cards, close stale discussions).
 
-## Suggested rollout
+## Alternate static hosts
 
-1. Start with GitHub Pages for speed.
-2. Share URL with team and gather card quality feedback.
-3. Move to Netlify/Vercel/S3 only if you need custom domain, auth, or stricter enterprise controls.
+- Netlify (publish root)
+- Vercel static (output `.`)
+- S3 + CloudFront
+
+
+## Content model note
+
+When hosting, ensure `profiles.json` is served alongside `index.html` and `cards.json`, since role-based packs depend on it.
