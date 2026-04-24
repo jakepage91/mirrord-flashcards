@@ -784,24 +784,8 @@
     </div>
   </div>
 
-  <!-- GitHub config -->
-  <div class="settings-section">
-    <div class="section-title">GitHub integration</div>
-    <div class="gh-grid">
-      <div>
-        <label for="ghRepo" class="field-label">Repository</label>
-        <input id="ghRepo" type="text" placeholder="owner/repo" />
-      </div>
-      <div>
-        <label for="ghCategoryId" class="field-label">Discussion category ID</label>
-        <input id="ghCategoryId" type="text" />
-      </div>
-    </div>
-    <div class="author-row">
-      <button id="ghSaveConfigBtn" class="btn btn-secondary btn-sm">Save config</button>
-    </div>
-    <div class="gh-status" id="ghAuthState"></div>
-  </div>
+  <!-- GitHub config (hidden — repo is hardcoded) -->
+  <div class="gh-status" id="ghAuthState" style="display:none"></div>
 </div>
 
 <!-- ===== Discussion Modal Backdrop ===== -->
@@ -809,24 +793,15 @@
   <div class="discuss-modal" id="discussModal">
     <button class="modal-close" id="discussClose" aria-label="Close">&times;</button>
     <div class="panel-title">Discuss this card</div>
-    <!-- Unauth state -->
-    <div id="discussUnauth">
-      <p style="font-size: var(--fs-sm); color: var(--ink-500); margin-bottom: var(--s-3);">
-        Sign in with GitHub to enable Discussions.
-      </p>
+    <p style="font-size: var(--fs-sm); color: var(--ink-500); margin-bottom: var(--s-3);">
+      This will open a GitHub Discussion on <strong>jakepage91/mirrord-flashcards</strong> linked to the current card.
+    </p>
+    <label for="ghFeedbackBody" class="field-label">What's your feedback?</label>
+    <textarea id="ghFeedbackBody" placeholder="What should change? Is the answer wrong or incomplete? Suggest an improvement."></textarea>
+    <div class="author-row" style="margin-top: var(--s-3);">
+      <button id="ghCreateDiscussionBtn" class="btn btn-primary btn-sm">Create discussion</button>
     </div>
-    <!-- Auth state -->
-    <div id="discussAuth" class="hidden">
-      <p style="font-size: var(--fs-sm); color: var(--ink-500); margin-bottom: var(--s-3);">
-        Authenticated as <strong id="discussLogin"></strong>
-      </p>
-      <label for="ghFeedbackBody" class="field-label">Feedback for current card</label>
-      <textarea id="ghFeedbackBody" placeholder="What should change? Why?"></textarea>
-      <div class="author-row" style="margin-top: var(--s-3);">
-        <button id="ghCreateDiscussionBtn" class="btn btn-primary btn-sm">Create discussion</button>
-      </div>
-      <div class="gh-status" id="ghSubmitState"></div>
-    </div>
+    <div class="gh-status" id="ghSubmitState"></div>
   </div>
 </div>
 
@@ -852,7 +827,7 @@
   const PREFS_KEY = 'mirrord_flashcards_prefs_v4';
   const CUSTOM_DECK_KEY = 'mirrord_flashcards_custom_cards_v1';
   const GH_AUTH_KEY = 'mirrord_flashcards_github_auth_v1';
-  const GH_CFG_KEY = 'mirrord_flashcards_github_cfg_v1';
+  const GH_REPO = 'jakepage91/mirrord-flashcards';
   const STREAK_KEY = 'mirrord_flashcards_streaks_v1';
 
   const state = {
@@ -868,7 +843,7 @@
     tag: 'all',
     source: 'all',
     activeProfile: 'none',
-    gh: { token: '', login: '', cfg: { repo: '', categoryId: '' } },
+    gh: { token: '', login: '' },
     streaks: { studyDays: [], currentStreak: 0, longestStreak: 0 },
     userProfile: null
   };
@@ -929,9 +904,6 @@
     termTooltip: document.getElementById('termTooltip'),
     discussLink: document.getElementById('discussLink'),
     // GitHub
-    ghRepo: document.getElementById('ghRepo'),
-    ghCategoryId: document.getElementById('ghCategoryId'),
-    ghSaveConfigBtn: document.getElementById('ghSaveConfigBtn'),
     ghAuthState: document.getElementById('ghAuthState'),
     ghFeedbackBody: document.getElementById('ghFeedbackBody'),
     ghCreateDiscussionBtn: document.getElementById('ghCreateDiscussionBtn'),
@@ -945,9 +917,6 @@
     discussBackdrop: document.getElementById('discussBackdrop'),
     discussModal: document.getElementById('discussModal'),
     discussClose: document.getElementById('discussClose'),
-    discussUnauth: document.getElementById('discussUnauth'),
-    discussAuth: document.getElementById('discussAuth'),
-    discussLogin: document.getElementById('discussLogin'),
     // Streak
     streakBadge: document.getElementById('streakBadge'),
     streakCount: document.getElementById('streakCount'),
@@ -1358,14 +1327,7 @@
 
   // ===== Discussion modal =====
   function openDiscussModal() {
-    if (state.gh.token) {
-      el.discussUnauth.classList.add('hidden');
-      el.discussAuth.classList.remove('hidden');
-      el.discussLogin.textContent = `@${state.gh.login}`;
-    } else {
-      el.discussUnauth.classList.remove('hidden');
-      el.discussAuth.classList.add('hidden');
-    }
+    el.ghSubmitState.textContent = '';
     el.discussBackdrop.classList.add('visible');
   }
   function closeDiscussModal() {
@@ -1389,38 +1351,19 @@
     return j.data;
   }
 
-  function loadGitHubState() {
-    state.gh.cfg = loadJSON(GH_CFG_KEY, state.gh.cfg);
-    el.ghRepo.value = state.gh.cfg.repo || '';
-    el.ghCategoryId.value = state.gh.cfg.categoryId || '';
-    el.ghAuthState.textContent = state.gh.token
-      ? `Authenticated as @${state.gh.login}`
-      : 'Sign in with GitHub to enable Discussions';
-  }
-
-  function saveGitHubCfgFromForm() {
-    state.gh.cfg = {
-      repo: el.ghRepo.value.trim(),
-      categoryId: el.ghCategoryId.value.trim()
-    };
-    saveJSON(GH_CFG_KEY, state.gh.cfg);
-    el.ghAuthState.textContent = 'Saved GitHub configuration.';
-  }
-
   async function createCardDiscussion() {
     const c = currentCard();
     if (!c) { el.ghSubmitState.textContent = 'No current card.'; return; }
-    if (!state.gh.token) { el.ghSubmitState.textContent = 'Authenticate first.'; return; }
-    saveGitHubCfgFromForm();
-    if (!state.gh.cfg.repo.includes('/')) { el.ghSubmitState.textContent = 'Repository must be owner/repo.'; return; }
+    if (!state.gh.token) { el.ghSubmitState.textContent = 'GitHub token not available. Try logging out and back in.'; return; }
     const feedback = el.ghFeedbackBody.value.trim();
     if (!feedback) { el.ghSubmitState.textContent = 'Feedback text required.'; return; }
-    const [owner, name] = state.gh.cfg.repo.split('/');
-    const rq = `query($owner:String!,$name:String!){repository(owner:$owner,name:$name){id discussionCategories(first:20){nodes{id}}}}`;
+    el.ghSubmitState.textContent = 'Creating discussion...';
+    const [owner, name] = GH_REPO.split('/');
+    const rq = `query($owner:String!,$name:String!){repository(owner:$owner,name:$name){id discussionCategories(first:20){nodes{id name}}}}`;
     const rd = await ghGraphQL(rq, { owner, name });
     const repositoryId = rd.repository.id;
-    const categoryId = state.gh.cfg.categoryId || rd.repository.discussionCategories.nodes?.[0]?.id;
-    if (!categoryId) { el.ghSubmitState.textContent = 'No category ID available.'; return; }
+    const categoryId = rd.repository.discussionCategories.nodes?.[0]?.id;
+    if (!categoryId) { el.ghSubmitState.textContent = 'No discussion categories found. Enable Discussions on the repo first.'; return; }
     const title = `[card:${c.id}] ${c.front.length > 90 ? c.front.slice(0, 90) + '\u2026' : c.front}`;
     const body = [
       `### Flashcard feedback`, ``,
@@ -1642,8 +1585,6 @@
       saveJSON(GH_AUTH_KEY, { token: session.provider_token, login: state.gh.login });
     }
 
-    // Load GitHub config (repo, category)
-    state.gh.cfg = loadJSON(GH_CFG_KEY, state.gh.cfg);
 
     // Fetch profile
     const profile = await fetchProfile(session.user.id);
@@ -1679,8 +1620,6 @@
     // Update top bar user info
     updateUserDisplay(profile);
 
-    // Load GitHub state into settings panel
-    loadGitHubState();
 
     // Refresh everything
     refreshAll();
@@ -1836,7 +1775,6 @@
   });
 
   // GitHub event wiring
-  el.ghSaveConfigBtn.addEventListener('click', saveGitHubCfgFromForm);
   el.ghCreateDiscussionBtn.addEventListener('click', () => createCardDiscussion().catch(err => { el.ghSubmitState.textContent = `Submit error: ${err.message}`; }));
 
   // Login buttons
