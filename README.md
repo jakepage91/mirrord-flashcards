@@ -7,7 +7,7 @@ A spaced-repetition flashcard app for learning **mirrord** deeply. Role-based pr
 - **88 curated cards** covering mirrord fundamentals, Kubernetes, networking, policy/governance, DevRel workflows, and business positioning
 - **5 role-based profiles**: DevRel (all cards), HR / Non-Technical (basic only), Core Team (all minus operator), Product, Solutions Engineering
 - **Spaced repetition** (SM-2 algorithm) with streak tracking
-- **GitHub + Google login** via Supabase Auth (Google restricted to `@metalbear.co`)
+- **GitHub + Google login** via Supabase Auth (Google restricted to `@metalbear.com`)
 - **Onboarding flow**: pick your role profile and daily cadence on first login
 - **Cross-device sync**: progress, streaks, and custom cards stored in Supabase Postgres
 - **GitHub Discussions integration**: open a discussion about any card directly from the app
@@ -21,7 +21,7 @@ A spaced-repetition flashcard app for learning **mirrord** deeply. Role-based pr
 
 1. Create a project at [supabase.com](https://supabase.com)
 2. Enable **GitHub** auth provider (create a GitHub OAuth App, add `public_repo` scope)
-3. Enable **Google** auth provider (restrict to `@metalbear.co` domain)
+3. Enable **Google** auth provider (restrict to `@metalbear.com` domain)
 4. Run the SQL schema from the [setup guide](.claude/plans/indexed-moseying-sutherland.md) in the Supabase SQL editor
 5. Copy your **Project URL** and **anon key**
 
