@@ -1,58 +1,78 @@
 # mirrord-flashcards
 
-A phone-friendly spaced-repetition flashcard app for learning **mirrord** deeply, with simplified audience profiles and optional GitHub-authenticated feedback discussions.
+A spaced-repetition flashcard app for learning **mirrord** deeply. Role-based profiles, streak tracking, GitHub/Google login via Supabase, and card-linked GitHub Discussion feedback.
 
-## What’s new in this iteration
+## Features
 
-- Profile model simplified to **two profiles only**:
-  - **Tech Beginners**
-  - **HR / Non-Technical**
-- Smart card metadata continues to drive filtering:
-  - `tags`
-  - `technicality` (`basic` / `intermediate` / `advanced`)
-  - `audiences`
-  - `tracks`
-- Added **in-card quick explainer tooltips** for protocol/fundamental terms (e.g., UDP, TCP, OCI, DNS, TLS) when they appear in a card.
+- **88 curated cards** covering mirrord fundamentals, Kubernetes, networking, policy/governance, DevRel workflows, and business positioning
+- **5 role-based profiles**: DevRel (all cards), HR / Non-Technical (basic only), Core Team (all minus operator), Product, Solutions Engineering
+- **Spaced repetition** (SM-2 algorithm) with streak tracking
+- **GitHub + Google login** via Supabase Auth (Google restricted to `@metalbear.co`)
+- **Onboarding flow**: pick your role profile and daily cadence on first login
+- **Cross-device sync**: progress, streaks, and custom cards stored in Supabase Postgres
+- **GitHub Discussions integration**: open a discussion about any card directly from the app
+- **In-card glossary tooltips** for terms like TCP, UDP, DNS, Kubernetes, TLS, CIDR
+- **Dark/light mode** with OS preference detection
+- **Custom card authoring** with import/export
 
-## Core capabilities
+## Setup
 
-- Static app (`index.html`) with no runtime backend required for study.
-- Spaced repetition scheduling and local progress persistence.
-- Curated core deck (`cards.json`) plus custom card authoring.
-- Profile filtering via `profiles.json`.
-- Optional GitHub Device Flow login + create a Discussion tied to the current card.
+### 1. Supabase project
 
-## Weekly triage support
+1. Create a project at [supabase.com](https://supabase.com)
+2. Enable **GitHub** auth provider (create a GitHub OAuth App, add `public_repo` scope)
+3. Enable **Google** auth provider (restrict to `@metalbear.co` domain)
+4. Run the SQL schema from the [setup guide](.claude/plans/indexed-moseying-sutherland.md) in the Supabase SQL editor
+5. Copy your **Project URL** and **anon key**
 
-A scheduled workflow runs weekly and generates a digest of discussions that match `[card:` in the title:
+### 2. Configure the app
 
-- `.github/workflows/weekly-discussion-digest.yml`
-- `scripts/weekly_discussion_digest.sh`
+In `index.html`, replace the placeholder values:
 
-It uploads a markdown artifact listing card-linked discussion threads for review.
+```javascript
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+```
 
-## Quick start
+### 3. Deploy
+
+The app deploys as static files. GitHub Pages is included:
+
+1. Push to `main`
+2. In **Settings > Pages**, set source to **GitHub Actions**
+3. The `.github/workflows/pages.yml` workflow handles deployment
+
+### 4. Run locally
 
 ```bash
 python3 -m http.server 8080
 ```
 
-Open `http://localhost:8080`.
+Open `http://localhost:8080`. Note: Supabase auth requires the OAuth redirect URL to match your deployment URL.
 
 ## Files
 
-- `index.html` — app UI + profile filtering + tooltip explainers + scheduling + GitHub feedback integration
-- `cards.json` — curated core deck with smart metadata
-- `profiles.json` — two audience profile definitions
-- `HOSTING.md` — hosting and rollout options
-- `.github/workflows/pages.yml` — deploy static app to GitHub Pages
-- `.github/workflows/weekly-discussion-digest.yml` — weekly discussion digest
-- `scripts/weekly_discussion_digest.sh` — digest generator
+| File | Purpose |
+|------|---------|
+| `index.html` | Full app: UI, auth, spaced repetition, sync, Discussions |
+| `cards.json` | 88 curated cards with metadata (tags, audiences, technicality) |
+| `profiles.json` | 5 role-based profile definitions |
+| `tokens.css` | Cloudforge design tokens (colors, type, spacing, dark mode) |
+| `logo.png` | Mirror mascot brand mark |
+| `HOSTING.md` | Hosting options and Supabase configuration notes |
 
+## Profiles
 
-## Conflict safety check
+| Profile | What you study | Technicality |
+|---------|---------------|-------------|
+| **DevRel** | All 88 cards | basic, intermediate, advanced |
+| **HR / Non-Technical** | Value props, positioning, use cases | basic only |
+| **Core Team** | Everything except operator-specific | basic, intermediate, advanced |
+| **Product** | Use cases, positioning, governance | basic, intermediate |
+| **Solutions Engineering** | Governance, policy, production, troubleshooting | basic, intermediate, advanced |
 
-A CI guard is included to fail fast if unresolved merge markers are committed:
+## CI/CD
 
-- `.github/workflows/conflict-marker-check.yml`
-- `scripts/check_conflict_markers.sh`
+- `.github/workflows/pages.yml` — deploy to GitHub Pages
+- `.github/workflows/weekly-discussion-digest.yml` — weekly digest of card-linked Discussions
+- `.github/workflows/conflict-marker-check.yml` — fail fast on unresolved merge markers
