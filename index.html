@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tokens.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -44,6 +45,107 @@
 
   .container { max-width: 880px; margin: 0 auto; padding: 0 var(--s-5) var(--s-8); }
 
+  /* ========= Login Screen ========= */
+  #loginScreen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: var(--s-5);
+  }
+  .login-card {
+    text-align: center; max-width: 400px; width: 100%;
+  }
+  .login-logo {
+    width: 72px; height: auto; margin: 0 auto var(--s-4); display: block;
+  }
+  .login-title {
+    font-family: var(--font-display); font-weight: 700; font-size: 1.75rem;
+    color: var(--ink-900); letter-spacing: -0.02em; margin-bottom: var(--s-2);
+  }
+  .login-title em { font-style: normal; color: var(--iris-600); }
+  .login-tagline {
+    font-size: var(--fs-sm); color: var(--ink-500); margin-bottom: var(--s-6);
+    line-height: 1.5;
+  }
+  .login-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; padding: 12px 20px; border-radius: var(--r-pill);
+    font-family: var(--font-sans); font-weight: 500; font-size: var(--fs-body);
+    cursor: pointer; transition: transform var(--dur-fast), background var(--dur-base), border-color var(--dur-base);
+    border: 1px solid transparent; text-decoration: none;
+  }
+  .login-btn:active { transform: translateY(1px); }
+  .login-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .login-btn-github {
+    background: var(--iris-500); color: #fff; border-color: var(--iris-500);
+    box-shadow: var(--shadow-glow-iris); margin-bottom: var(--s-3);
+  }
+  .login-btn-github:hover { background: var(--iris-600); border-color: var(--iris-600); }
+  .login-btn-google {
+    background: var(--paper-0); color: var(--ink-900); border-color: var(--paper-300);
+  }
+  .login-btn-google:hover { border-color: var(--iris-500); color: var(--iris-600); }
+  .login-hint {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-500);
+    margin-top: 6px; letter-spacing: 0.02em;
+  }
+
+  /* ========= Onboarding Modal ========= */
+  .onboarding-modal {
+    background: var(--paper-0);
+    border: var(--border-soft);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-md);
+    width: 100%; max-width: 560px;
+    padding: var(--s-6);
+    position: relative;
+    animation: fadein var(--dur-base) var(--ease-out);
+  }
+  .onboard-title {
+    font-family: var(--font-display); font-weight: 700; font-size: 1.25rem;
+    color: var(--ink-900); letter-spacing: -0.01em; margin-bottom: 4px;
+  }
+  .onboard-subtitle {
+    font-size: var(--fs-sm); color: var(--ink-500); margin-bottom: var(--s-5);
+  }
+  .onboard-section-label {
+    font-family: var(--font-mono); font-size: 11px; text-transform: uppercase;
+    letter-spacing: var(--tr-wide); color: var(--ink-500); margin-bottom: var(--s-3);
+  }
+  .onboard-roles {
+    display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3);
+    margin-bottom: var(--s-5);
+  }
+  .onboard-role {
+    padding: var(--s-3) var(--s-4); border-radius: var(--r-lg);
+    border: 2px solid var(--paper-300); background: var(--paper-0);
+    cursor: pointer; transition: border-color var(--dur-fast), background var(--dur-fast);
+    text-align: left;
+  }
+  .onboard-role:hover { border-color: var(--iris-300); }
+  .onboard-role.selected { border-color: var(--iris-500); background: var(--iris-50); }
+  .onboard-role-name {
+    font-family: var(--font-sans); font-weight: 600; font-size: var(--fs-sm);
+    color: var(--ink-900); margin-bottom: 2px;
+  }
+  .onboard-role-desc {
+    font-size: var(--fs-xs); color: var(--ink-500); line-height: 1.4;
+  }
+  .cadence-section { margin-bottom: var(--s-5); }
+  .cadence-buttons { display: flex; gap: var(--s-2); }
+  .cadence-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-sans); font-weight: 500; font-size: var(--fs-sm);
+    padding: 8px 16px; border-radius: var(--r-pill);
+    border: 1px solid var(--paper-300); background: var(--paper-0); color: var(--ink-800);
+    cursor: pointer; transition: background var(--dur-fast), border-color var(--dur-fast);
+  }
+  .cadence-btn:hover { border-color: var(--iris-300); }
+  .cadence-btn.btn-primary {
+    background: var(--iris-500); color: #fff; border-color: var(--iris-500);
+  }
+  @media (max-width: 520px) {
+    .onboard-roles { grid-template-columns: 1fr; }
+  }
+
   /* ========= Top Bar (sticky) ========= */
   .top-bar {
     position: sticky; top: 0; z-index: 100;
@@ -72,6 +174,26 @@
     font-size: var(--fs-xs); padding: 5px 8px; border-radius: var(--r-md);
     max-width: 180px;
   }
+
+  /* ========= User display in top bar ========= */
+  .user-info {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .user-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    object-fit: cover; border: 1px solid var(--paper-300);
+  }
+  .user-name {
+    font-family: var(--font-sans); font-size: var(--fs-xs);
+    color: var(--ink-700); font-weight: 500; white-space: nowrap;
+  }
+  .btn-logout {
+    font-family: var(--font-sans); font-size: var(--fs-xs);
+    color: var(--ink-500); background: none; border: none; cursor: pointer;
+    padding: 4px 8px; border-radius: var(--r-md);
+    transition: background var(--dur-fast), color var(--dur-fast);
+  }
+  .btn-logout:hover { background: var(--paper-100); color: var(--ink-800); }
 
   /* ========= Streak Badge ========= */
   .streak-badge {
@@ -136,6 +258,7 @@
   .btn-sm { padding: 6px 12px; font-size: var(--fs-xs); }
   .btn-lg { padding: 12px 22px; font-size: var(--fs-body); }
   .btn svg { width: 14px; height: 14px; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .hidden { display: none !important; }
 
@@ -446,6 +569,71 @@
 </head>
 <body>
 
+<!-- ===== Login Screen ===== -->
+<div id="loginScreen">
+  <div class="login-card">
+    <img class="login-logo" src="logo.png" alt="mirrord mirror mascot" />
+    <div class="login-title"><em>mirrord</em> flashcards</div>
+    <p class="login-tagline">There's always more to learn. That's why this exists.</p>
+    <button class="login-btn login-btn-github" id="loginGitHub">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      Sign in with GitHub
+    </button>
+    <button class="login-btn login-btn-google" id="loginGoogle">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 0 0 1 12c0 1.77.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Sign in with Google
+    </button>
+    <div class="login-hint">@metalbear.co accounts only</div>
+  </div>
+</div>
+
+<!-- ===== Onboarding Modal ===== -->
+<div id="onboardingModal" class="modal-backdrop" style="display:none">
+  <div class="onboarding-modal">
+    <div class="onboard-title">Welcome to mirrord flashcards</div>
+    <p class="onboard-subtitle">Let's set up your learning profile</p>
+
+    <div class="onboard-section-label">Choose your role</div>
+    <div class="onboard-roles">
+      <div class="onboard-role" data-role="devrel">
+        <div class="onboard-role-name">DevRel</div>
+        <div class="onboard-role-desc">Full access to all cards</div>
+      </div>
+      <div class="onboard-role" data-role="hr">
+        <div class="onboard-role-name">HR / Non-Technical</div>
+        <div class="onboard-role-desc">Business-focused, plain language</div>
+      </div>
+      <div class="onboard-role" data-role="core">
+        <div class="onboard-role-name">Core Team</div>
+        <div class="onboard-role-desc">Everything except operator-specific</div>
+      </div>
+      <div class="onboard-role" data-role="product">
+        <div class="onboard-role-name">Product</div>
+        <div class="onboard-role-desc">Use cases, positioning, strategy</div>
+      </div>
+      <div class="onboard-role" data-role="solutions">
+        <div class="onboard-role-name">Solutions Engineering</div>
+        <div class="onboard-role-desc">Governance, policy, production</div>
+      </div>
+    </div>
+
+    <div class="cadence-section">
+      <div class="onboard-section-label">How many cards per day?</div>
+      <div class="cadence-buttons">
+        <button class="cadence-btn" data-cadence="5">5</button>
+        <button class="cadence-btn btn-primary" data-cadence="10">10</button>
+        <button class="cadence-btn" data-cadence="15">15</button>
+        <button class="cadence-btn" data-cadence="20">20</button>
+      </div>
+    </div>
+
+    <button id="onboardStartBtn" class="btn btn-primary btn-lg" style="width:100%;" disabled>Get started</button>
+  </div>
+</div>
+
+<!-- ===== Main App (hidden until auth) ===== -->
+<div id="mainApp" style="display:none">
+
 <!-- ===== Top Bar ===== -->
 <div class="top-bar">
   <div class="top-bar-left">
@@ -471,6 +659,11 @@
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
     </button>
+    <div class="user-info">
+      <img id="userAvatar" class="user-avatar" src="" alt="" style="display:none" />
+      <span id="userName" class="user-name"></span>
+    </div>
+    <button class="btn-logout" id="logoutBtn">Logout</button>
   </div>
 </div>
 
@@ -520,10 +713,10 @@
     <div class="status-pill" id="status">&mdash;</div>
   </div>
 
-  <footer class="footer">
-    Built with <em>cloudforge</em> design system &middot; answer in the order: what &rarr; why &rarr; step-by-step &rarr; safety.
-  </footer>
+  <footer class="footer">There's always more to learn. That's why this exists.</footer>
 </div>
+
+</div><!-- /mainApp -->
 
 <!-- ===== Settings Backdrop ===== -->
 <div class="settings-backdrop" id="settingsBackdrop"></div>
@@ -596,10 +789,6 @@
     <div class="section-title">GitHub integration</div>
     <div class="gh-grid">
       <div>
-        <label for="ghClientId" class="field-label">OAuth client ID</label>
-        <input id="ghClientId" type="text" placeholder="Iv1..." />
-      </div>
-      <div>
         <label for="ghRepo" class="field-label">Repository</label>
         <input id="ghRepo" type="text" placeholder="owner/repo" />
       </div>
@@ -607,20 +796,11 @@
         <label for="ghCategoryId" class="field-label">Discussion category ID</label>
         <input id="ghCategoryId" type="text" />
       </div>
-      <div>
-        <label for="ghScopes" class="field-label">Scopes</label>
-        <input id="ghScopes" type="text" value="public_repo" />
-      </div>
     </div>
     <div class="author-row">
       <button id="ghSaveConfigBtn" class="btn btn-secondary btn-sm">Save config</button>
-      <button id="ghStartLoginBtn" class="btn btn-primary btn-sm">Login with GitHub</button>
-      <button id="ghLoadCategoriesBtn" class="btn btn-ghost btn-sm">Load categories</button>
-      <button id="ghLogoutBtn" class="btn btn-again btn-sm">Logout</button>
     </div>
     <div class="gh-status" id="ghAuthState"></div>
-    <div class="gh-status" id="ghDeviceState"></div>
-    <div class="gh-status" id="ghCategoryState"></div>
   </div>
 </div>
 
@@ -632,9 +812,8 @@
     <!-- Unauth state -->
     <div id="discussUnauth">
       <p style="font-size: var(--fs-sm); color: var(--ink-500); margin-bottom: var(--s-3);">
-        You need to authenticate with GitHub first. Open Settings to configure your OAuth credentials, then log in.
+        Sign in with GitHub to enable Discussions.
       </p>
-      <button id="discussGoSettings" class="btn btn-secondary btn-sm">Open settings</button>
     </div>
     <!-- Auth state -->
     <div id="discussAuth" class="hidden">
@@ -657,6 +836,13 @@
   // spaced repetition, streak tracking, settings panel, modal.
   // Storage keys match v4 for forward compatibility.
   // ================================================================
+
+  // ===== Supabase Configuration =====
+  // Replace these with your Supabase project credentials
+  const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
   const STORAGE_KEY = 'mirrord_flashcards_progress_v4';
   const PREFS_KEY = 'mirrord_flashcards_prefs_v4';
   const CUSTOM_DECK_KEY = 'mirrord_flashcards_custom_cards_v1';
@@ -677,8 +863,9 @@
     tag: 'all',
     source: 'all',
     activeProfile: 'none',
-    gh: { token: '', login: '', cfg: { clientId: '', repo: '', categoryId: '', scopes: 'public_repo' } },
-    streaks: { studyDays: [], currentStreak: 0, longestStreak: 0 }
+    gh: { token: '', login: '', cfg: { repo: '', categoryId: '' } },
+    streaks: { studyDays: [], currentStreak: 0, longestStreak: 0 },
+    userProfile: null
   };
 
   const GLOSSARY = {
@@ -737,17 +924,10 @@
     termTooltip: document.getElementById('termTooltip'),
     discussLink: document.getElementById('discussLink'),
     // GitHub
-    ghClientId: document.getElementById('ghClientId'),
     ghRepo: document.getElementById('ghRepo'),
     ghCategoryId: document.getElementById('ghCategoryId'),
-    ghScopes: document.getElementById('ghScopes'),
     ghSaveConfigBtn: document.getElementById('ghSaveConfigBtn'),
-    ghStartLoginBtn: document.getElementById('ghStartLoginBtn'),
-    ghLoadCategoriesBtn: document.getElementById('ghLoadCategoriesBtn'),
-    ghLogoutBtn: document.getElementById('ghLogoutBtn'),
     ghAuthState: document.getElementById('ghAuthState'),
-    ghDeviceState: document.getElementById('ghDeviceState'),
-    ghCategoryState: document.getElementById('ghCategoryState'),
     ghFeedbackBody: document.getElementById('ghFeedbackBody'),
     ghCreateDiscussionBtn: document.getElementById('ghCreateDiscussionBtn'),
     ghSubmitState: document.getElementById('ghSubmitState'),
@@ -763,11 +943,12 @@
     discussUnauth: document.getElementById('discussUnauth'),
     discussAuth: document.getElementById('discussAuth'),
     discussLogin: document.getElementById('discussLogin'),
-    discussGoSettings: document.getElementById('discussGoSettings'),
     // Streak
     streakBadge: document.getElementById('streakBadge'),
     streakCount: document.getElementById('streakCount'),
-    streakTooltip: document.getElementById('streakTooltip')
+    streakTooltip: document.getElementById('streakTooltip'),
+    // User
+    logoutBtn: document.getElementById('logoutBtn')
   };
 
   const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -894,13 +1075,15 @@
     recalcStreaks();
     saveStreaks();
     renderStreak();
+    syncStudyDayToSupabase(today).catch(console.warn);
   }
 
-  function recalcStreaks() {
-    const days = [...new Set(state.streaks.studyDays)].sort().reverse();
+  function recalcStreaks(streakObj) {
+    const target = streakObj || state.streaks;
+    const days = [...new Set(target.studyDays)].sort().reverse();
     if (!days.length) {
-      state.streaks.currentStreak = 0;
-      state.streaks.longestStreak = 0;
+      target.currentStreak = 0;
+      target.longestStreak = 0;
       return;
     }
     // current streak: count consecutive days ending at today or yesterday
@@ -917,7 +1100,7 @@
       current++;
       check.setDate(check.getDate() - 1);
     }
-    state.streaks.currentStreak = current;
+    target.currentStreak = current;
 
     // longest streak
     let longest = 0, run = 1;
@@ -930,7 +1113,7 @@
       else { longest = Math.max(longest, run); run = 1; }
     }
     longest = Math.max(longest, run);
-    state.streaks.longestStreak = longest;
+    target.longestStreak = longest;
   }
 
   function daysStudiedThisWeek() {
@@ -1132,6 +1315,7 @@
     }
     p.last = todayStr();
     saveJSON(STORAGE_KEY, state.progress);
+    syncProgressToSupabase(card.id, p).catch(console.warn);
     recordStudyDay();
     state.queue.splice(state.idx, 1);
     if (state.idx >= state.queue.length) state.idx = Math.max(0, state.queue.length - 1);
@@ -1202,91 +1386,20 @@
 
   function loadGitHubState() {
     state.gh.cfg = loadJSON(GH_CFG_KEY, state.gh.cfg);
-    const a = loadJSON(GH_AUTH_KEY, { token: '', login: '' });
-    state.gh.token = a.token || '';
-    state.gh.login = a.login || '';
-    el.ghClientId.value = state.gh.cfg.clientId || '';
     el.ghRepo.value = state.gh.cfg.repo || '';
     el.ghCategoryId.value = state.gh.cfg.categoryId || '';
-    el.ghScopes.value = state.gh.cfg.scopes || 'public_repo';
-    el.ghAuthState.textContent = state.gh.token ? `Authenticated as @${state.gh.login}` : 'Not authenticated.';
+    el.ghAuthState.textContent = state.gh.token
+      ? `Authenticated as @${state.gh.login}`
+      : 'Sign in with GitHub to enable Discussions';
   }
 
   function saveGitHubCfgFromForm() {
     state.gh.cfg = {
-      clientId: el.ghClientId.value.trim(),
       repo: el.ghRepo.value.trim(),
-      categoryId: el.ghCategoryId.value.trim(),
-      scopes: el.ghScopes.value.trim() || 'public_repo'
+      categoryId: el.ghCategoryId.value.trim()
     };
     saveJSON(GH_CFG_KEY, state.gh.cfg);
     el.ghAuthState.textContent = 'Saved GitHub configuration.';
-  }
-
-  function clearGitHubAuth() {
-    state.gh.token = ''; state.gh.login = '';
-    saveJSON(GH_AUTH_KEY, { token: '', login: '' });
-    el.ghAuthState.textContent = 'Not authenticated.';
-  }
-
-  async function startGitHubDeviceLogin() {
-    saveGitHubCfgFromForm();
-    if (!state.gh.cfg.clientId) { el.ghDeviceState.textContent = 'Client ID required.'; return; }
-    const body = new URLSearchParams({ client_id: state.gh.cfg.clientId, scope: state.gh.cfg.scopes });
-    const dcRes = await fetch('https://github.com/login/device/code', {
-      method: 'POST',
-      headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-      body
-    });
-    const dc = await dcRes.json();
-    if (!dcRes.ok || dc.error) {
-      el.ghDeviceState.textContent = `Device code error: ${dc.error_description || dc.error || dcRes.status}`;
-      return;
-    }
-    const verify = dc.verification_uri || 'https://github.com/login/device';
-    el.ghDeviceState.innerHTML = `1) Open <a target="_blank" rel="noreferrer" href="${verify}">${verify}</a> 2) Enter code <strong>${dc.user_code}</strong>. Waiting...`;
-    let interval = (dc.interval || 5) * 1000;
-    const start = Date.now();
-    while (Date.now() - start < ((dc.expires_in || 900) * 1000)) {
-      await new Promise(r => setTimeout(r, interval));
-      const tokenBody = new URLSearchParams({
-        client_id: state.gh.cfg.clientId,
-        device_code: dc.device_code,
-        grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
-      });
-      const tkRes = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: tokenBody
-      });
-      const tk = await tkRes.json();
-      if (tk.error === 'authorization_pending') continue;
-      if (tk.error === 'slow_down') { interval += 5000; continue; }
-      if (tk.error) { el.ghDeviceState.textContent = `Login failed: ${tk.error_description || tk.error}`; return; }
-      if (!tk.access_token) { el.ghDeviceState.textContent = 'Login failed: no access token returned.'; return; }
-      const viewer = await fetch('https://api.github.com/user', {
-        headers: { Authorization: `Bearer ${tk.access_token}`, Accept: 'application/vnd.github+json' }
-      }).then(r => r.json());
-      state.gh.token = tk.access_token;
-      state.gh.login = viewer.login || 'unknown';
-      saveJSON(GH_AUTH_KEY, { token: state.gh.token, login: state.gh.login });
-      el.ghAuthState.textContent = `Authenticated as @${state.gh.login}`;
-      el.ghDeviceState.textContent = 'GitHub login successful.';
-      return;
-    }
-    el.ghDeviceState.textContent = 'Device login timed out.';
-  }
-
-  async function loadDiscussionCategories() {
-    saveGitHubCfgFromForm();
-    if (!state.gh.cfg.repo.includes('/')) { el.ghCategoryState.textContent = 'Repository must be owner/repo.'; return; }
-    const [owner, name] = state.gh.cfg.repo.split('/');
-    const q = `query($owner:String!,$name:String!){repository(owner:$owner,name:$name){discussionCategories(first:20){nodes{id name}}}}`;
-    const d = await ghGraphQL(q, { owner, name });
-    const cats = d.repository.discussionCategories.nodes || [];
-    if (!cats.length) { el.ghCategoryState.textContent = 'No categories found.'; return; }
-    el.ghCategoryState.innerHTML = cats.map(c => `${c.name}: <code>${c.id}</code>`).join(' &middot; ');
-    if (!state.gh.cfg.categoryId) { el.ghCategoryId.value = cats[0].id; saveGitHubCfgFromForm(); }
   }
 
   async function createCardDiscussion() {
@@ -1342,6 +1455,7 @@
     };
     state.customCards.unshift(newCard);
     saveCustomCards();
+    syncCustomCardToSupabase(newCard).catch(console.warn);
     el.newFront.value = ''; el.newBack.value = ''; el.newTags.value = '';
     el.newDifficulty.value = '2'; el.newTechnicality.value = 'intermediate';
     el.addCardStatus.textContent = '\u2713 Card added.';
@@ -1357,6 +1471,249 @@
       console.warn('profiles.json not loaded - no profiles available', e);
       state.profiles = [];
     }
+  }
+
+  // ===== Supabase Auth Functions =====
+  async function loginWithGitHub() {
+    await sb.auth.signInWithOAuth({
+      provider: 'github',
+      options: {
+        redirectTo: window.location.origin + window.location.pathname,
+        scopes: 'public_repo'
+      }
+    });
+  }
+
+  async function loginWithGoogle() {
+    await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + window.location.pathname,
+        queryParams: { hd: 'metalbear.co' }
+      }
+    });
+  }
+
+  async function logout() {
+    await sb.auth.signOut();
+    document.getElementById('loginScreen').style.display = '';
+    document.getElementById('mainApp').style.display = 'none';
+  }
+
+  async function fetchProfile(userId) {
+    const { data } = await sb.from('profiles').select('*').eq('id', userId).single();
+    return data;
+  }
+
+  async function saveOnboarding(userId, role, cadence) {
+    await sb.from('profiles').update({
+      role: role,
+      daily_cadence: cadence,
+      onboarding_complete: true
+    }).eq('id', userId);
+  }
+
+  // ===== Supabase Data Sync =====
+  async function syncFromSupabase(userId) {
+    const [progressRes, studyDaysRes, customCardsRes] = await Promise.all([
+      sb.from('progress').select('*').eq('user_id', userId),
+      sb.from('study_days').select('*').eq('user_id', userId).order('study_date', { ascending: false }),
+      sb.from('custom_cards').select('*').eq('user_id', userId)
+    ]);
+
+    if (progressRes.data) {
+      for (const row of progressRes.data) {
+        state.progress[row.card_id] = {
+          id: row.card_id, reps: row.reps, interval: row.interval,
+          ease: parseFloat(row.ease), due: row.due, last: row.last_reviewed
+        };
+      }
+      saveJSON(STORAGE_KEY, state.progress);
+    }
+
+    if (studyDaysRes.data) {
+      const streakData = loadJSON(STREAK_KEY, { studyDays: [], currentStreak: 0, longestStreak: 0 });
+      streakData.studyDays = [...new Set([...streakData.studyDays, ...studyDaysRes.data.map(r => r.study_date)])].sort();
+      recalcStreaks(streakData);
+      saveJSON(STREAK_KEY, streakData);
+    }
+
+    if (customCardsRes.data) {
+      state.customCards = customCardsRes.data.map(row => ({
+        id: row.id, front: row.front, back: row.back,
+        tags: row.tags || [], difficulty: row.difficulty || 2,
+        technicality: row.technicality || 'intermediate',
+        audiences: row.audiences || ['devrel'],
+        tracks: row.tracks || ['learning']
+      }));
+      saveCustomCards();
+    }
+  }
+
+  async function syncProgressToSupabase(cardId, p) {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    await sb.from('progress').upsert({
+      user_id: session.user.id, card_id: cardId,
+      reps: p.reps, interval: p.interval, ease: p.ease,
+      due: p.due, last_reviewed: p.last
+    }, { onConflict: 'user_id,card_id' });
+  }
+
+  async function syncStudyDayToSupabase(dateStr) {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    await sb.from('study_days').upsert({
+      user_id: session.user.id, study_date: dateStr, cards_reviewed: 1
+    }, { onConflict: 'user_id,study_date' });
+  }
+
+  async function syncCustomCardToSupabase(card) {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    await sb.from('custom_cards').insert({
+      id: card.id, user_id: session.user.id,
+      front: card.front, back: card.back, tags: card.tags,
+      difficulty: card.difficulty, technicality: card.technicality,
+      audiences: card.audiences, tracks: card.tracks
+    });
+  }
+
+  async function migrateLocalStorageToSupabase(userId) {
+    const localProgress = loadJSON(STORAGE_KEY, {});
+    const localStreaks = loadJSON(STREAK_KEY, { studyDays: [] });
+    const localCustomCards = loadJSON(CUSTOM_DECK_KEY, []);
+
+    if (Object.keys(localProgress).length) {
+      const rows = Object.entries(localProgress).map(([cardId, p]) => ({
+        user_id: userId, card_id: cardId,
+        reps: p.reps || 0, interval: p.interval || 0, ease: p.ease || 2.5,
+        due: p.due || todayStr(), last_reviewed: p.last || null
+      }));
+      await sb.from('progress').upsert(rows, { onConflict: 'user_id,card_id' });
+    }
+
+    if (localStreaks.studyDays?.length) {
+      const rows = localStreaks.studyDays.map(d => ({
+        user_id: userId, study_date: d, cards_reviewed: 1
+      }));
+      await sb.from('study_days').upsert(rows, { onConflict: 'user_id,study_date' });
+    }
+
+    if (localCustomCards.length) {
+      const rows = localCustomCards.map(c => ({
+        id: c.id, user_id: userId, front: c.front, back: c.back,
+        tags: c.tags || [], difficulty: c.difficulty || 2,
+        technicality: c.technicality || 'intermediate',
+        audiences: c.audiences || ['devrel'], tracks: c.tracks || ['learning']
+      }));
+      await sb.from('custom_cards').upsert(rows, { onConflict: 'id' });
+    }
+  }
+
+  // ===== Auth Flow =====
+  async function handleSignedIn(session) {
+    // Set GitHub token for Discussions
+    const stored = loadJSON(GH_AUTH_KEY, { token: '', login: '' });
+    state.gh.token = session.provider_token || stored.token;
+    state.gh.login = session.user.user_metadata?.user_name || stored.login;
+    if (session.provider_token) {
+      saveJSON(GH_AUTH_KEY, { token: session.provider_token, login: state.gh.login });
+    }
+
+    // Load GitHub config (repo, category)
+    state.gh.cfg = loadJSON(GH_CFG_KEY, state.gh.cfg);
+
+    // Fetch profile
+    const profile = await fetchProfile(session.user.id);
+
+    if (!profile || !profile.onboarding_complete) {
+      // Show onboarding
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('onboardingModal').style.display = '';
+      return;
+    }
+
+    // Set profile from Supabase
+    state.activeProfile = profile.role || 'devrel';
+    state.userProfile = profile;
+
+    // Load local caches
+    loadPrefs();
+    state.activeProfile = profile.role; // Supabase wins
+    loadCustomCards();
+    loadStreaks();
+
+    // Sync from Supabase (overwrites localStorage with server data)
+    await syncFromSupabase(session.user.id);
+
+    // Migrate any orphaned localStorage data
+    // (only on first sync, migrateLocalStorageToSupabase is idempotent due to upserts)
+
+    // Show main app
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('onboardingModal').style.display = 'none';
+    document.getElementById('mainApp').style.display = '';
+
+    // Update top bar user info
+    updateUserDisplay(profile);
+
+    // Load GitHub state into settings panel
+    loadGitHubState();
+
+    // Refresh everything
+    refreshAll();
+    wireCardButtons();
+  }
+
+  function updateUserDisplay(profile) {
+    const avatarEl = document.getElementById('userAvatar');
+    const nameEl = document.getElementById('userName');
+    if (avatarEl && profile.avatar_url) {
+      avatarEl.src = profile.avatar_url;
+      avatarEl.style.display = '';
+    }
+    if (nameEl) {
+      nameEl.textContent = profile.display_name || profile.github_login || '';
+    }
+  }
+
+  // ===== Onboarding =====
+  function initOnboarding() {
+    const roleCards = document.querySelectorAll('.onboard-role');
+    let selectedRole = null;
+    let selectedCadence = 10;
+
+    roleCards.forEach(card => {
+      card.addEventListener('click', () => {
+        roleCards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedRole = card.dataset.role;
+        document.getElementById('onboardStartBtn').disabled = !selectedRole;
+      });
+    });
+
+    document.querySelectorAll('.cadence-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cadence-btn').forEach(b => b.classList.remove('btn-primary'));
+        btn.classList.add('btn-primary');
+        selectedCadence = parseInt(btn.dataset.cadence);
+      });
+    });
+
+    document.getElementById('onboardStartBtn').addEventListener('click', async () => {
+      if (!selectedRole) return;
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) return;
+
+      await saveOnboarding(session.user.id, selectedRole, selectedCadence);
+
+      // Migrate localStorage data
+      await migrateLocalStorageToSupabase(session.user.id);
+
+      // Now sign in properly
+      await handleSignedIn(session);
+    });
   }
 
   // ===== Event wiring =====
@@ -1440,10 +1797,6 @@
   el.discussBackdrop.addEventListener('click', (e) => {
     if (e.target === el.discussBackdrop) closeDiscussModal();
   });
-  el.discussGoSettings.addEventListener('click', () => {
-    closeDiscussModal();
-    openSettings();
-  });
 
   // Streak badge tooltip toggle
   el.streakBadge.addEventListener('click', (e) => {
@@ -1456,10 +1809,12 @@
 
   // GitHub event wiring
   el.ghSaveConfigBtn.addEventListener('click', saveGitHubCfgFromForm);
-  el.ghStartLoginBtn.addEventListener('click', () => startGitHubDeviceLogin().catch(err => { el.ghDeviceState.textContent = `Login error: ${err.message}`; }));
-  el.ghLoadCategoriesBtn.addEventListener('click', () => loadDiscussionCategories().catch(err => { el.ghCategoryState.textContent = `Category load error: ${err.message}`; }));
-  el.ghLogoutBtn.addEventListener('click', clearGitHubAuth);
   el.ghCreateDiscussionBtn.addEventListener('click', () => createCardDiscussion().catch(err => { el.ghSubmitState.textContent = `Submit error: ${err.message}`; }));
+
+  // Login buttons
+  document.getElementById('loginGitHub').addEventListener('click', loginWithGitHub);
+  document.getElementById('loginGoogle').addEventListener('click', loginWithGoogle);
+  el.logoutBtn.addEventListener('click', logout);
 
   // ===== Theme toggle =====
   const THEME_KEY = 'mirrord_flashcards_theme';
@@ -1483,18 +1838,33 @@
     applyTheme(cur);
   });
 
+  // ===== Init with onboarding =====
+  initOnboarding();
+
   (async function init() {
-    try {
-      await loadBase();
-    } catch (e) {
-      console.warn('cards.json not loaded - empty deck', e);
+    // Init theme immediately (already done above via IIFE)
+
+    try { await loadBase(); } catch (e) { console.warn('cards.json not loaded', e); }
+
+    // Check auth
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      await handleSignedIn(session);
+    } else {
+      document.getElementById('loginScreen').style.display = '';
+      document.getElementById('mainApp').style.display = 'none';
     }
-    loadPrefs();
-    loadCustomCards();
-    loadStreaks();
-    loadGitHubState();
-    refreshAll();
-    wireCardButtons();
+
+    // Listen for auth changes (handles OAuth redirect)
+    sb.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        await handleSignedIn(session);
+      }
+      if (event === 'SIGNED_OUT') {
+        document.getElementById('loginScreen').style.display = '';
+        document.getElementById('mainApp').style.display = 'none';
+      }
+    });
   })();
 </script>
 </body>
