@@ -25,30 +25,32 @@ A spaced-repetition flashcard app for learning **mirrord** deeply. Role-based pr
 4. Run the SQL schema from the [setup guide](.claude/plans/indexed-moseying-sutherland.md) in the Supabase SQL editor
 5. Copy your **Project URL** and **anon key**
 
-### 2. Configure the app
+### 2. Add repository secrets
 
-In `index.html`, replace the placeholder values:
+Go to **Settings > Secrets and variables > Actions** in your GitHub repo and add:
 
-```javascript
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-```
+| Secret | Value |
+|--------|-------|
+| `SUPABASE_URL` | Your Supabase project URL (e.g. `https://abcdefgh.supabase.co`) |
+| `SUPABASE_ANON_KEY` | Your Supabase anon/public key (the `eyJ...` string from Settings > API) |
+
+The deploy workflow injects these into `index.html` at build time — no secrets in source code.
 
 ### 3. Deploy
 
-The app deploys as static files. GitHub Pages is included:
-
 1. Push to `main`
 2. In **Settings > Pages**, set source to **GitHub Actions**
-3. The `.github/workflows/pages.yml` workflow handles deployment
+3. The `.github/workflows/pages.yml` workflow injects Supabase config and deploys
 
 ### 4. Run locally
 
 ```bash
+cp .env.example .env
+# Edit .env with your Supabase values, then:
 python3 -m http.server 8080
 ```
 
-Open `http://localhost:8080`. Note: Supabase auth requires the OAuth redirect URL to match your deployment URL.
+Note: for local dev you'll need to manually replace the placeholders in `index.html`, or use the deployed version. Supabase auth requires the OAuth redirect URL to match your deployment URL (add `http://localhost:8080` in Supabase > Authentication > URL Configuration > Redirect URLs).
 
 ## Files
 
