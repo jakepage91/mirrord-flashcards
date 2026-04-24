@@ -588,7 +588,7 @@
 </div>
 
 <!-- ===== Onboarding Modal ===== -->
-<div id="onboardingModal" class="modal-backdrop" style="display:none">
+<div id="onboardingModal" class="modal-backdrop">
   <div class="onboarding-modal">
     <div class="onboard-title">Welcome to mirrord flashcards</div>
     <p class="onboard-subtitle">Let's set up your learning profile</p>
@@ -1633,6 +1633,7 @@
 
   // ===== Auth Flow =====
   async function handleSignedIn(session) {
+    try {
     // Set GitHub token for Discussions
     const stored = loadJSON(GH_AUTH_KEY, { token: '', login: '' });
     state.gh.token = session.provider_token || stored.token;
@@ -1650,7 +1651,7 @@
     if (!profile || !profile.onboarding_complete) {
       // Show onboarding
       document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('onboardingModal').style.display = '';
+      document.getElementById('onboardingModal').classList.add('visible');
       return;
     }
 
@@ -1672,7 +1673,7 @@
 
     // Show main app
     document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('onboardingModal').style.display = 'none';
+    document.getElementById('onboardingModal').classList.remove('visible');
     document.getElementById('mainApp').style.display = '';
 
     // Update top bar user info
@@ -1684,6 +1685,13 @@
     // Refresh everything
     refreshAll();
     wireCardButtons();
+    } catch (err) {
+      console.error('handleSignedIn failed:', err);
+      // Show login screen on failure so user isn't stuck on blank page
+      document.getElementById('loginScreen').style.display = '';
+      document.getElementById('onboardingModal').classList.remove('visible');
+      document.getElementById('mainApp').style.display = 'none';
+    }
   }
 
   function updateUserDisplay(profile) {
