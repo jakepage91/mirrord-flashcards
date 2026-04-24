@@ -1,0 +1,1316 @@
+[
+  {
+    "id": "arch-001",
+    "front": "In mirror mode for incoming traffic, who sends the final client response?",
+    "back": "The remote target still handles the request and sends the response. Your local process gets a copy for observation/testing, and local responses to mirrored requests are dropped.",
+    "tags": [
+      "network",
+      "incoming",
+      "architecture"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "incoming",
+      "network"
+    ]
+  },
+  {
+    "id": "arch-002",
+    "front": "In steal mode for incoming traffic, who sends the final client response?",
+    "back": "Your local process handles the stolen request and sends the response. The remote target does not process those stolen requests.",
+    "tags": [
+      "network",
+      "incoming"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "incoming",
+      "network"
+    ]
+  },
+  {
+    "id": "arch-003",
+    "front": "Why can mirroring incoming traffic create duplicate downstream side effects?",
+    "back": "If request handling triggers outgoing calls, both remote target and local mirrored handler may call downstream services for the same request unless filtered or controlled.",
+    "tags": [
+      "network",
+      "risk",
+      "outgoing"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "network",
+      "outgoing"
+    ]
+  },
+  {
+    "id": "arch-004",
+    "front": "Technical nuance: how does mirrord commonly redirect traffic at pod level?",
+    "back": "A common mechanism is configuring traffic redirection rules (for example iptables-based paths) in target networking context so relevant flows can be mirrored or stolen to local handling.",
+    "tags": [
+      "architecture",
+      "network",
+      "deep-dive"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "network"
+    ]
+  },
+  {
+    "id": "chaos-001",
+    "front": "How do you frame chaos-style mirrord experiments beyond 'did it crash?'",
+    "back": "Measure propagation: which requests degrade first, retry behavior, timeouts, fallback paths, queue growth, and user-visible errors. Focus on failure shape and recovery, not binary success.",
+    "tags": [
+      "chaos",
+      "reliability",
+      "devrel"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "chaos",
+      "devrel"
+    ]
+  },
+  {
+    "id": "chaos-002",
+    "front": "Redis dependency test: what exact observations make the experiment useful?",
+    "back": "Track latency/error percentiles, cache miss amplification, circuit-breaker transitions, queue depth, fallback correctness, and recovery time once Redis path is restored.",
+    "tags": [
+      "chaos",
+      "redis",
+      "observability"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "devrel",
+      "product-engineering"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "chaos"
+    ]
+  },
+  {
+    "id": "chaos-003",
+    "front": "Why combine chaos tests with policy limits?",
+    "back": "Chaos without guardrails becomes outage generation. Policies constrain targets, traffic scope, and reachable endpoints so experiments stay intentional and reversible.",
+    "tags": [
+      "chaos",
+      "policy",
+      "safety"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "product",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "chaos",
+      "policy"
+    ]
+  },
+  {
+    "id": "copy-001",
+    "front": "What does `copy_target` do conceptually?",
+    "back": "Instead of using original target directly, mirrord creates a new pod from target pod spec and uses that copy as session target.",
+    "tags": [
+      "copy-target",
+      "operator",
+      "team"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "copy-002",
+    "front": "Why is `copy_target` useful when debugging with breakpoints and stolen traffic?",
+    "back": "Copied pod removes probes (liveness/readiness/startup), so pausing on breakpoints is less likely to trigger probe failures and pod restarts while you inspect behavior.",
+    "tags": [
+      "copy-target",
+      "incoming",
+      "debugging"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "incoming"
+    ]
+  },
+  {
+    "id": "copy-003",
+    "front": "What does `copy_target.scale_down` change during a session?",
+    "back": "It can scale target workload to zero and effectively replace existing pods with the copied pod used by mirrord session, enabling whole-workload replacement style testing.",
+    "tags": [
+      "copy-target",
+      "operations",
+      "advanced"
+    ],
+    "difficulty": 4,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "operations"
+    ]
+  },
+  {
+    "id": "copy-004",
+    "front": "How can you inspect whether copied targets are active?",
+    "back": "Run `mirrord operator status`; it reports active copy targets (or explicitly indicates none are active).",
+    "tags": [
+      "copy-target",
+      "operations",
+      "sessions"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "operations"
+    ]
+  },
+  {
+    "id": "devrel-001",
+    "front": "Best concise answer: 'Why mirrord instead of kubectl exec for debugging?'",
+    "back": "mirrord keeps your full local IDE/debug workflow while borrowing real cluster context, which is often faster and more iterative than in-pod editing and redeploy cycles.",
+    "tags": [
+      "devrel",
+      "positioning",
+      "fundamentals"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "solutions-engineering"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "devrel",
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "devrel-002",
+    "front": "How should you answer 'Is mirrord safe?' as a trustworthy advocate?",
+    "back": "Safety depends on controls. Emphasize policy enforcement, scoped targets, filtered traffic modes, session visibility, and platform ownership\u2014not blanket yes/no claims.",
+    "tags": [
+      "devrel",
+      "security",
+      "communication"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product",
+      "product-engineering",
+      "sales",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "devrel",
+      "security"
+    ]
+  },
+  {
+    "id": "devrel-003",
+    "front": "What does a high-quality mirrord demo flow look like?",
+    "back": "1) Show baseline pain (slow deploy loop). 2) Run local with mirrord. 3) Use realistic filter. 4) Debug quickly with breakpoint. 5) Explain policy guardrails. 6) Show measurable time savings.",
+    "tags": [
+      "devrel",
+      "demo",
+      "workflow"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "devrel"
+    ]
+  },
+  {
+    "id": "dns-001",
+    "front": "Why is remote DNS resolution important when debugging locally?",
+    "back": "Cluster internal names (like service DNS) may not resolve on your laptop. Remote DNS makes local process resolve names like the target pod would.",
+    "tags": [
+      "dns",
+      "outgoing",
+      "fundamentals"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals",
+      "outgoing"
+    ]
+  },
+  {
+    "id": "env-001",
+    "front": "What are the three key knobs in `feature.env` for practical use?",
+    "back": "`include` (which remote env vars to import), `exclude` (which remote vars not to import), and `override` (force specific local values even if remote has different values).",
+    "tags": [
+      "env",
+      "config"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "devrel",
+      "product-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "env-002",
+    "front": "Why can `override` in env config be safer than fully local env usage?",
+    "back": "It lets you keep mostly remote-realistic configuration while surgically changing specific vars (for example region/profile) that should differ in your local test session.",
+    "tags": [
+      "env",
+      "safety",
+      "config"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "devrel",
+      "product-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "env-003",
+    "front": "Policy scenario: how can env policy override user configuration?",
+    "back": "If policy excludes a pattern (e.g. `*_URL`), those vars are blocked even if user config includes them. Operator policy takes precedence over individual user settings.",
+    "tags": [
+      "env",
+      "policy",
+      "compliance"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "product",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "policy"
+    ]
+  },
+  {
+    "id": "found-001",
+    "front": "What is TCP in simple terms, and why does it matter for app reliability?",
+    "back": "TCP is a connection-oriented protocol that prioritizes ordered, reliable delivery. For teams, it matters because many application flows assume data arrives intact and in order, which affects retries, latency, and failure behavior.",
+    "tags": [
+      "foundation",
+      "network",
+      "non-technical",
+      "sales"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product",
+      "product-engineering",
+      "sales-leadership",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "foundation",
+      "network"
+    ]
+  },
+  {
+    "id": "found-002",
+    "front": "What is UDP in simple terms, and when is it preferred?",
+    "back": "UDP is connectionless and lightweight: lower overhead, no guaranteed delivery/order. It is preferred for latency-sensitive use cases where speed matters more than perfect reliability (for example some streaming/telemetry patterns).",
+    "tags": [
+      "foundation",
+      "network",
+      "non-technical",
+      "sales"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product",
+      "product-engineering",
+      "sales-leadership",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "foundation",
+      "network"
+    ]
+  },
+  {
+    "id": "found-003",
+    "front": "TCP vs UDP: what is the practical decision tradeoff?",
+    "back": "TCP gives reliability and ordering; UDP gives lower overhead/latency. Teams choose based on correctness needs, latency targets, packet loss tolerance, and protocol behavior in their system.",
+    "tags": [
+      "foundation",
+      "network",
+      "non-technical",
+      "product"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product",
+      "product-engineering",
+      "sales-leadership",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "foundation",
+      "network",
+      "product"
+    ]
+  },
+  {
+    "id": "found-004",
+    "front": "What is OCI and why should non-engineering roles care?",
+    "back": "OCI defines standardized container image/runtime formats. Non-engineering roles should care because it enables portability across tooling/clouds and reduces lock-in risk in product and GTM narratives.",
+    "tags": [
+      "foundation",
+      "container",
+      "non-technical",
+      "sales",
+      "product"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "foundation",
+      "product"
+    ]
+  },
+  {
+    "id": "found-005",
+    "front": "What does 'in-cluster context' mean in mirrord language?",
+    "back": "It means using the network/config/runtime perspective of a Kubernetes workload while your process still runs locally. This is the core value proposition behind faster, realistic debugging.",
+    "tags": [
+      "foundation",
+      "fundamentals",
+      "non-technical",
+      "devrel"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "sales-leadership",
+      "solutions-engineering"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "devrel",
+      "foundation",
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "found-006",
+    "front": "Why is a static flashcard app useful for cross-functional learning?",
+    "back": "Static delivery removes operational friction. Anyone in Product, Sales, DevRel, or Engineering can access one URL and repeatedly train on aligned concepts with role-focused profiles.",
+    "tags": [
+      "foundation",
+      "learning",
+      "non-technical",
+      "product"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "foundation",
+      "learning",
+      "product"
+    ]
+  },
+  {
+    "id": "found-007",
+    "front": "What is a Kubernetes pod in one practical sentence?",
+    "back": "A pod is the smallest deployable unit in Kubernetes, containing one or more containers that share network/storage context and run together on a node.",
+    "tags": [
+      "foundation",
+      "kubernetes",
+      "non-technical",
+      "sales"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "foundation",
+      "kubernetes"
+    ]
+  },
+  {
+    "id": "found-008",
+    "front": "Why do leadership/sales teams benefit from technical flashcards?",
+    "back": "It improves precision in customer conversations, reduces overpromising, and helps position product capabilities and limits credibly under real-world constraints.",
+    "tags": [
+      "foundation",
+      "sales",
+      "leadership",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "foundation"
+    ]
+  },
+  {
+    "id": "found-009",
+    "front": "What is a 'blast radius' and why is it discussed with mirrord usage policies?",
+    "back": "Blast radius is the scope of impact when something goes wrong. mirrord policies limit blast radius by constraining targets, modes, and access so experimentation stays safe.",
+    "tags": [
+      "foundation",
+      "risk",
+      "policy",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product",
+      "product-engineering",
+      "sales-leadership",
+      "solutions-engineering"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "foundation",
+      "policy"
+    ]
+  },
+  {
+    "id": "found-010",
+    "front": "What does 'spaced repetition' optimize when learning technical products?",
+    "back": "It times review intervals based on recall difficulty so high-value, weakly remembered concepts reappear sooner, improving long-term retention and explanation quality.",
+    "tags": [
+      "foundation",
+      "learning",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "foundation",
+      "learning"
+    ]
+  },
+  {
+    "id": "fs-001",
+    "front": "What is the default file operation behavior with mirrord?",
+    "back": "File access is relayed to target pod context by default (with platform-specific exceptions), so local process reads/writes against remote file paths unless mode/config changes.",
+    "tags": [
+      "filesystem",
+      "fundamentals"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "devrel",
+      "product-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "fs-002",
+    "front": "Step-by-step: what happens on a remote-opened file descriptor?",
+    "back": "When file open is resolved remotely, subsequent calls on that fd (read/write/seek) are forwarded through mirrord to remote side; non-remote fds continue via local libc behavior.",
+    "tags": [
+      "filesystem",
+      "architecture",
+      "deep-dive"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "devrel",
+      "product-engineering"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "fs-003",
+    "front": "How does fs policy strengthen governance?",
+    "back": "Operator policy can force read-only, force-local, or not-found behavior for matching paths, overriding user config and constraining risky file interactions with remote targets.",
+    "tags": [
+      "filesystem",
+      "policy",
+      "compliance"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "product",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "policy"
+    ]
+  },
+  {
+    "id": "fund-001",
+    "front": "What problem does mirrord solve in day-to-day cloud-native development?",
+    "back": "It shortens the debug loop by letting your local process run with cloud context from a Kubernetes target (traffic, env, filesystem, DNS/outgoing) without a full image build+deploy each code change.",
+    "tags": [
+      "fundamentals",
+      "devex"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product-engineering"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "fund-002",
+    "front": "Step-by-step: what happens when you run `mirrord exec --target deploy/my-app ...`?",
+    "back": "1) mirrord layer injects into local process. 2) It connects to cluster side components. 3) A target workload/pod context is selected. 4) Intercepted operations (network/env/fs according to config) are forwarded through that context. 5) Responses are returned to local process so your IDE/debugger stays local.",
+    "tags": [
+      "fundamentals",
+      "workflow",
+      "architecture"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "devrel",
+      "product-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "fund-003",
+    "front": "Why is mirrord often adopted first in staging rather than production?",
+    "back": "Because staging lowers risk while teams establish policy controls, audit expectations, and safe defaults. It is easier to test traffic modes and developer workflows before introducing production governance constraints.",
+    "tags": [
+      "fundamentals",
+      "governance"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "product",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "incoming-001",
+    "front": "What are valid values for `feature.network.incoming.mode` and when do you use each?",
+    "back": "`mirror` (default): observe traffic safely while remote serves requests. `steal`: local process serves selected incoming traffic. `off`: disable incoming interception.",
+    "tags": [
+      "config",
+      "incoming"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "incoming"
+    ]
+  },
+  {
+    "id": "incoming-002",
+    "front": "How do HTTP filters change incoming interception behavior?",
+    "back": "You define header/path/method filters so only matching HTTP/HTTP2/gRPC requests are delivered to local process. In mirror, filtered requests are copied; in steal, filtered requests are redirected.",
+    "tags": [
+      "incoming",
+      "filtering",
+      "http"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "incoming"
+    ]
+  },
+  {
+    "id": "incoming-003",
+    "front": "Why should you set explicit `incoming.ports` when filtering HTTP traffic?",
+    "back": "Without explicit port scope, non-filtered eligible ports may still be stolen/mirrored by mode behavior. Setting ports avoids accidental capture of unrelated traffic (health probes, admin ports, etc.).",
+    "tags": [
+      "incoming",
+      "safety",
+      "config"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "incoming"
+    ]
+  },
+  {
+    "id": "incoming-004",
+    "front": "What is `incoming.ignore_ports` useful for?",
+    "back": "It excludes specific ports from interception, especially useful in steal mode to avoid diverting probe/heartbeat traffic. It is mutually exclusive with `incoming.ports`.",
+    "tags": [
+      "incoming",
+      "config",
+      "operations"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "incoming",
+      "operations"
+    ]
+  },
+  {
+    "id": "incoming-005",
+    "front": "What does `incoming.listen_ports` solve?",
+    "back": "If local app cannot bind original port (for example port 80), listen_ports maps remote intercepted port to a local usable port so you can still receive traffic locally.",
+    "tags": [
+      "incoming",
+      "ports",
+      "devex"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "incoming"
+    ]
+  },
+  {
+    "id": "incoming-006",
+    "front": "What is `on_concurrent_steal` (Operator) for?",
+    "back": "It controls behavior when another session already holds a port lock for stealing. `continue` keeps normal flow; `override` can replace existing lock and close prior locking connection.",
+    "tags": [
+      "incoming",
+      "operator",
+      "team"
+    ],
+    "difficulty": 4,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "incoming"
+    ]
+  },
+  {
+    "id": "incoming-007",
+    "front": "When is stealing TLS traffic relevant, and what does `tls_delivery` affect?",
+    "back": "In Operator-supported TLS steal scenarios, `tls_delivery` controls whether stolen TLS is delivered to local app as TLS or as plain TCP, depending on your local app expectations.",
+    "tags": [
+      "incoming",
+      "tls",
+      "operator"
+    ],
+    "difficulty": 4,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "incoming"
+    ]
+  },
+  {
+    "id": "outgoing-001",
+    "front": "Step-by-step: how does mirrord make local code reach cluster-only dependencies?",
+    "back": "1) Import remote env (hostnames/endpoints). 2) Resolve DNS using remote context when enabled. 3) Intercept outgoing sockets. 4) Send traffic through remote pod network path. 5) Return responses to local process.",
+    "tags": [
+      "outgoing",
+      "dns",
+      "workflow"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "outgoing"
+    ]
+  },
+  {
+    "id": "outgoing-002",
+    "front": "Why use outgoing traffic filters?",
+    "back": "To choose which hostnames stay local vs remote, e.g., keep app talking to in-cluster services remotely while forcing database hostname local for safe local DB testing.",
+    "tags": [
+      "outgoing",
+      "filtering",
+      "use-case"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "outgoing"
+    ]
+  },
+  {
+    "id": "outgoing-003",
+    "front": "What UDP caveat should you remember for outgoing interception?",
+    "back": "UDP forwarding has constraints: it is intercepted when app binds a non-zero port and performs `connect` before sending; otherwise behavior may not match TCP interception expectations.",
+    "tags": [
+      "outgoing",
+      "udp",
+      "troubleshooting"
+    ],
+    "difficulty": 4,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "outgoing"
+    ]
+  },
+  {
+    "id": "outgoing-004",
+    "front": "How can outgoing policy controls support compliance?",
+    "back": "Operator-enforced outgoing policies can restrict reachable CIDRs/ports/protocols and prevent sessions from accessing unauthorized endpoints from cluster context.",
+    "tags": [
+      "outgoing",
+      "policy",
+      "compliance"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "outgoing",
+      "policy"
+    ]
+  },
+  {
+    "id": "policy-001",
+    "front": "Difference: `MirrordPolicy` vs `MirrordClusterPolicy`?",
+    "back": "`MirrordPolicy` is namespaced scope; `MirrordClusterPolicy` provides cluster-wide scope. Use both for local flexibility under global guardrails.",
+    "tags": [
+      "policy",
+      "kubernetes",
+      "governance"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "product",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "kubernetes",
+      "policy"
+    ]
+  },
+  {
+    "id": "policy-002",
+    "front": "Why is policy precedence critical for compliance?",
+    "back": "Policies overriding user config ensure non-negotiable rules (target restrictions, fs/env controls, network rules) hold even when local developer config is permissive.",
+    "tags": [
+      "policy",
+      "compliance"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "product",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "policy"
+    ]
+  },
+  {
+    "id": "policy-003",
+    "front": "What are `targetPath` and selector restrictions in policies used for?",
+    "back": "They narrow which targets a policy applies to. This avoids accidental overreach and closes bypasses (e.g., blocking deployment target but forgetting direct pod target path).",
+    "tags": [
+      "policy",
+      "targeting",
+      "security"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "product",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "policy",
+      "security"
+    ]
+  },
+  {
+    "id": "policy-004",
+    "front": "Why is profile policy explicitly not a security feature?",
+    "back": "Profiles adjust session configuration on user machine for consistency/UX; they are not a substitute for hard enforcement controls like restrictive policies and RBAC.",
+    "tags": [
+      "policy",
+      "profiles",
+      "security"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "policy",
+      "security"
+    ]
+  },
+  {
+    "id": "profiles-001",
+    "front": "What is a mirrord profile in practical terms?",
+    "back": "A reusable set of feature adjustments applied in order (for example `incoming-steal`, `outgoing-remote`) to standardize session behavior across teams.",
+    "tags": [
+      "profiles",
+      "team",
+      "operations"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "operations"
+    ]
+  },
+  {
+    "id": "profiles-002",
+    "front": "Name core profile adjustments every DevRel person should know.",
+    "back": "Incoming: `incoming-mirror`, `incoming-steal`, `incoming-off`; DNS: `dns-remote`, `dns-off`; Outgoing: `outgoing-remote`, `outgoing-off`.",
+    "tags": [
+      "profiles",
+      "devrel",
+      "config"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product",
+      "product-engineering",
+      "sales",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "devrel"
+    ]
+  },
+  {
+    "id": "security-001",
+    "front": "What minimum controls should exist before allowing production mirrord sessions?",
+    "back": "Strict target allowlists, traffic-mode limits, outgoing restrictions, auditable session logs, clear ownership, emergency disable runbook, and time-bounded access approvals.",
+    "tags": [
+      "security",
+      "production",
+      "governance"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "product",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "security"
+    ]
+  },
+  {
+    "id": "security-002",
+    "front": "Why does stealing all traffic carry higher risk than filtered steal?",
+    "back": "Full steal can unintentionally redirect unrelated user flows and probes. Filtered steal reduces blast radius by limiting which requests local code can handle.",
+    "tags": [
+      "security",
+      "incoming",
+      "risk"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "incoming",
+      "security"
+    ]
+  },
+  {
+    "id": "security-003",
+    "front": "How can outgoing policies reduce data exfiltration risk?",
+    "back": "By whitelisting allowed destinations/ports and blocking unexpected external ranges, so local sessions using cluster egress cannot reach arbitrary endpoints.",
+    "tags": [
+      "security",
+      "outgoing",
+      "policy"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "outgoing",
+      "policy",
+      "security"
+    ]
+  },
+  {
+    "id": "session-001",
+    "front": "What is an Operator session in mirrord for Teams/Enterprise?",
+    "back": "A tracked runtime session assigned when user starts mirrord on an Operator-managed cluster, containing target/user/duration and active port interception state until session ends.",
+    "tags": [
+      "sessions",
+      "operator",
+      "team"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "session-002",
+    "front": "Why should platform teams regularly review `mirrord operator status`?",
+    "back": "It reveals active sessions, targets, and steals, helping detect risky patterns (long steals, unexpected namespaces, high contention) and improve governance.",
+    "tags": [
+      "sessions",
+      "operations",
+      "governance"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "operations"
+    ]
+  },
+  {
+    "id": "targetless-001",
+    "front": "When should you use targetless mode?",
+    "back": "When you need cluster connectivity/context without impersonating a specific workload target\u2014for example running tools or checks that still benefit from cluster network context.",
+    "tags": [
+      "targetless",
+      "use-case"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "troubleshoot-001",
+    "front": "No incoming requests in local app: what is the fastest diagnosis sequence?",
+    "back": "1) Confirm target and namespace. 2) Check incoming mode and port scope. 3) Validate filters match real traffic. 4) Verify policy is not denying. 5) Confirm session visibility in operator status/dump.",
+    "tags": [
+      "troubleshooting",
+      "incoming",
+      "workflow"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "incoming"
+    ]
+  },
+  {
+    "id": "troubleshoot-002",
+    "front": "How does `mirrord dump` help before changing app code?",
+    "back": "It validates traffic actually reaches target and shows request shapes, helping isolate whether issue is traffic path/filtering vs your local code behavior.",
+    "tags": [
+      "troubleshooting",
+      "observability",
+      "incoming"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "incoming"
+    ]
+  },
+  {
+    "id": "troubleshoot-003",
+    "front": "Why can service mesh/sidecar environments change mirrord outcomes?",
+    "back": "Extra proxies modify routing/TLS/ports and may alter where interception must occur. Always verify actual data path instead of assuming plain pod networking.",
+    "tags": [
+      "troubleshooting",
+      "service-mesh",
+      "network"
+    ],
+    "difficulty": 4,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "windows"
+    ],
+    "technicality": "advanced",
+    "tracks": [
+      "network"
+    ]
+  }
+]

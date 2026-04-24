@@ -1,0 +1,20 @@
+[
+  {
+    "id": "tech-beginners",
+    "name": "Tech Beginners",
+    "description": "Starter-friendly profile with fundamentals, practical mirrord concepts, and gradual technical depth.",
+    "match": {
+      "requireAnyTags": ["foundation", "fundamentals", "devex", "kubernetes", "network", "use-case", "learning"],
+      "allowedTechnicality": ["basic", "intermediate"]
+    }
+  },
+  {
+    "id": "hr-non-technical",
+    "name": "HR / Non-Technical",
+    "description": "Business-safe and plain-language concepts for non-technical stakeholders, including macro product understanding.",
+    "match": {
+      "requireAnyTags": ["non-technical", "foundation", "fundamentals", "sales", "leadership", "learning"],
+      "allowedTechnicality": ["basic", "intermediate"]
+    }
+  }
+]

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>mirrord flashcards</title>
+  <style>
+    :root { --text:#e8ecff; --muted:#9fb0e6; --border:rgba(109,167,255,.35); --danger:#ff7b9c; --panel:#151c33; --panel2:#1b2340; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,#090e1d,#0d1430 35%,#111a3f);color:var(--text);min-height:100vh}
+    .container{max-width:1080px;margin:0 auto;padding:16px}
+    .header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}
+    h1{font-size:1.28rem;margin:0}
+    .small,.badge{font-size:.9rem;color:var(--muted)}
+    .card{background:rgba(21,28,51,.94);border:1px solid rgba(109,167,255,.25);border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.35);padding:18px;margin-bottom:14px}
+    .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .meta{color:var(--muted);font-size:.9rem;margin-bottom:8px}
+    .prompt{font-size:1.14rem;line-height:1.45;margin:10px 0}
+    .answer{background:var(--panel2);border:1px solid rgba(159,176,230,.18);border-radius:12px;padding:12px;line-height:1.5;display:none;white-space:pre-wrap}
+    button,input,textarea,select{border:1px solid var(--border);background:#15203f;color:var(--text);border-radius:10px;padding:10px 12px;font-size:.94rem}
+    button{cursor:pointer}.primary{background:#2254c9}.good{background:#1e6a4a}.hard{background:#5b4a1b}.ghost{background:#212c50}.reset{background:#5c2230}
+    textarea{width:100%;min-height:90px;resize:vertical}
+    .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.chip{border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:.78rem;background:rgba(34,84,201,.18)}
+    .hidden{display:none}.danger{color:var(--danger)}a{color:#8ab6ff}
+    @media (max-width:760px){.grid{grid-template-columns:1fr}.prompt{font-size:1.05rem}button{flex:1 1 auto}}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>mirrord flashcards</h1>
+      <div class="badge">learning profiles + spaced repetition + github discussion feedback</div>
+    </div>
+    <div class="row">
+      <button id="newModeBtn">Include new cards</button>
+      <button id="shuffleBtn" class="ghost">Shuffle queue</button>
+      <button id="exportBtn">Export progress</button>
+      <button id="exportDeckBtn" class="ghost">Export custom cards</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin:0;font-size:1rem;">Learning profile targeting</h2>
+    <div class="small">Pick between two audience modes: Tech Beginners and HR / Non-Technical.</div>
+    <div class="row">
+      <label class="small" for="profileSelect">Profile</label>
+      <select id="profileSelect"></select>
+      <button id="applyProfileBtn" class="primary">Apply profile</button>
+      <button id="clearProfileBtn" class="ghost">Clear profile</button>
+      <label class="small" for="technicalityFilter">Technicality</label>
+      <select id="technicalityFilter">
+        <option value="all">all</option>
+        <option value="basic">basic</option>
+        <option value="intermediate">intermediate</option>
+        <option value="advanced">advanced</option>
+      </select>
+    </div>
+    <div class="small" id="profileDescription"></div>
+    <div class="small" id="profileCoverage"></div>
+  </div>
+
+  <div class="card">
+    <div class="meta" id="meta"></div>
+    <div class="prompt" id="front"></div>
+    <div class="answer" id="back"></div>
+    <div class="chips" id="tags"></div>
+    <div class="small" id="tooltipHint"></div>
+    <div class="chips" id="termChips"></div>
+    <div class="answer" id="termTooltip" style="display:none; margin-top:8px;"></div>
+    <div class="row">
+      <button class="primary" id="showBtn">Show answer</button>
+      <button class="hard hidden" id="againBtn">Again</button>
+      <button class="hard hidden" id="hardBtn">Hard</button>
+      <button class="good hidden" id="goodBtn">Good</button>
+      <button class="good hidden" id="easyBtn">Easy</button>
+    </div>
+    <div class="row">
+      <label class="small" for="tagFilter">Tag</label><select id="tagFilter"></select>
+      <label class="small" for="sourceFilter">Source</label>
+      <select id="sourceFilter"><option value="all">all</option><option value="core">core</option><option value="custom">custom</option></select>
+    </div>
+    <div class="small" id="status"></div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin:0 0 8px 0;font-size:1rem;">GitHub feedback integration</h2>
+    <div class="small">Authenticate (Device Flow) and open a card-linked GitHub Discussion.</div>
+    <div class="grid" style="margin-top:10px;">
+      <div><label class="small" for="ghClientId">OAuth client ID</label><input id="ghClientId" placeholder="Iv1..." /></div>
+      <div><label class="small" for="ghRepo">Repository</label><input id="ghRepo" placeholder="owner/repo" /></div>
+    </div>
+    <div class="grid" style="margin-top:10px;">
+      <div><label class="small" for="ghCategoryId">Discussion category ID (optional)</label><input id="ghCategoryId" /></div>
+      <div><label class="small" for="ghScopes">Scopes</label><input id="ghScopes" value="public_repo" /></div>
+    </div>
+    <div class="row">
+      <button id="ghSaveConfigBtn" class="ghost">Save GitHub config</button>
+      <button id="ghStartLoginBtn" class="primary">Login with GitHub</button>
+      <button id="ghLoadCategoriesBtn" class="ghost">Load categories</button>
+      <button id="ghLogoutBtn" class="reset">Logout</button>
+    </div>
+    <div class="small" id="ghAuthState"></div><div class="small" id="ghDeviceState"></div><div class="small" id="ghCategoryState"></div>
+    <hr style="border-color: rgba(109,167,255,.25); margin: 14px 0;">
+    <label class="small" for="ghFeedbackBody">Feedback for current card</label>
+    <textarea id="ghFeedbackBody" placeholder="What should change? Why?"></textarea>
+    <div class="row"><button id="ghCreateDiscussionBtn" class="primary">Create GitHub discussion for this card</button></div>
+    <div class="small" id="ghSubmitState"></div>
+  </div>
+
+  <div class="card">
+    <h2 style="margin:0 0 8px 0;font-size:1rem;">Add your own flashcard</h2>
+    <div class="grid">
+      <div><label class="small" for="newFront">Question</label><textarea id="newFront"></textarea></div>
+      <div><label class="small" for="newBack">Answer</label><textarea id="newBack"></textarea></div>
+    </div>
+    <div class="row">
+      <input id="newTags" placeholder="tags comma-separated" />
+      <select id="newDifficulty"><option value="1">difficulty 1</option><option value="2" selected>difficulty 2</option><option value="3">difficulty 3</option><option value="4">difficulty 4</option><option value="5">difficulty 5</option></select>
+      <select id="newTechnicality"><option value="basic">basic</option><option value="intermediate" selected>intermediate</option><option value="advanced">advanced</option></select>
+      <button id="addCardBtn" class="primary">Add card</button>
+    </div>
+    <div class="row">
+      <label class="small" for="importProgressInput">Import progress</label><input id="importProgressInput" type="file" accept="application/json" />
+      <label class="small" for="importDeckInput">Import custom cards</label><input id="importDeckInput" type="file" accept="application/json" />
+      <button id="resetBtn" class="reset">Reset progress</button>
+      <button id="clearCustomBtn" class="reset">Delete custom cards</button>
+    </div>
+    <div class="small danger" id="addCardStatus"></div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY='mirrord_flashcards_progress_v4', PREFS_KEY='mirrord_flashcards_prefs_v4', CUSTOM_DECK_KEY='mirrord_flashcards_custom_cards_v1', GH_AUTH_KEY='mirrord_flashcards_github_auth_v1', GH_CFG_KEY='mirrord_flashcards_github_cfg_v1';
+const state={baseCards:[],profiles:[],customCards:[],cards:[],progress:{},queue:[],idx:0,includeNew:true,tag:'all',source:'all',technicality:'all',activeProfile:'none',gh:{token:'',login:'',cfg:{clientId:'',repo:'',categoryId:'',scopes:'public_repo'}}};
+const el={
+  meta:document.getElementById('meta'),front:document.getElementById('front'),back:document.getElementById('back'),tags:document.getElementById('tags'),status:document.getElementById('status'),
+  showBtn:document.getElementById('showBtn'),againBtn:document.getElementById('againBtn'),hardBtn:document.getElementById('hardBtn'),goodBtn:document.getElementById('goodBtn'),easyBtn:document.getElementById('easyBtn'),
+  newModeBtn:document.getElementById('newModeBtn'),shuffleBtn:document.getElementById('shuffleBtn'),exportBtn:document.getElementById('exportBtn'),exportDeckBtn:document.getElementById('exportDeckBtn'),tagFilter:document.getElementById('tagFilter'),sourceFilter:document.getElementById('sourceFilter'),
+  profileSelect:document.getElementById('profileSelect'),applyProfileBtn:document.getElementById('applyProfileBtn'),clearProfileBtn:document.getElementById('clearProfileBtn'),profileDescription:document.getElementById('profileDescription'),profileCoverage:document.getElementById('profileCoverage'),technicalityFilter:document.getElementById('technicalityFilter'),
+  importProgressInput:document.getElementById('importProgressInput'),importDeckInput:document.getElementById('importDeckInput'),resetBtn:document.getElementById('resetBtn'),clearCustomBtn:document.getElementById('clearCustomBtn'),newFront:document.getElementById('newFront'),newBack:document.getElementById('newBack'),newTags:document.getElementById('newTags'),newDifficulty:document.getElementById('newDifficulty'),newTechnicality:document.getElementById('newTechnicality'),addCardBtn:document.getElementById('addCardBtn'),addCardStatus:document.getElementById('addCardStatus'),
+  tooltipHint:document.getElementById('tooltipHint'),termChips:document.getElementById('termChips'),termTooltip:document.getElementById('termTooltip'),ghClientId:document.getElementById('ghClientId'),ghRepo:document.getElementById('ghRepo'),ghCategoryId:document.getElementById('ghCategoryId'),ghScopes:document.getElementById('ghScopes'),ghSaveConfigBtn:document.getElementById('ghSaveConfigBtn'),ghStartLoginBtn:document.getElementById('ghStartLoginBtn'),ghLoadCategoriesBtn:document.getElementById('ghLoadCategoriesBtn'),ghLogoutBtn:document.getElementById('ghLogoutBtn'),ghAuthState:document.getElementById('ghAuthState'),ghDeviceState:document.getElementById('ghDeviceState'),ghCategoryState:document.getElementById('ghCategoryState'),ghFeedbackBody:document.getElementById('ghFeedbackBody'),ghCreateDiscussionBtn:document.getElementById('ghCreateDiscussionBtn'),ghSubmitState:document.getElementById('ghSubmitState')
+};
+
+const GLOSSARY={
+  udp:'UDP is a lightweight transport protocol: fast, no built-in delivery/order guarantees.',
+  tcp:'TCP is a reliable transport protocol with ordered delivery and connection semantics.',
+  protocol:'A protocol is a set of communication rules used by systems over a network.',
+  oci:'OCI is the standard format/spec for container images and runtimes.',
+  dns:'DNS translates service/domain names into network addresses.',
+  kubernetes:'Kubernetes orchestrates containerized workloads across nodes.',
+  pod:'A pod is Kubernetes’ smallest deployable unit; one or more containers share context.',
+  tls:'TLS encrypts traffic in transit and helps ensure data confidentiality/integrity.',
+  cidr:'CIDR is notation for IP ranges used in routing and policy rules.',
+  timeout:'Timeout is the maximum wait time before giving up an operation.',
+  retry:'Retry means attempting an operation again after failure, usually with limits/backoff.',
+  latency:'Latency is the time delay between request and response.',
+  api:'An API is an interface allowing software components to communicate.',
+  service:'In Kubernetes, a Service is a stable network endpoint for a dynamic pod set.'
+};
+
+const todayStr=()=>new Date().toISOString().slice(0,10), plusDays=d=>{const x=new Date();x.setDate(x.getDate()+d);return x.toISOString().slice(0,10)};
+const parseTags=r=>(r||'').split(',').map(t=>t.trim().toLowerCase()).filter(Boolean);
+const defaultProgress=c=>({id:c.id,reps:0,interval:0,ease:2.5,due:todayStr(),last:null});
+const saveJSON=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const loadJSON=(k,f)=>{const r=localStorage.getItem(k);return r?JSON.parse(r):f};
+
+function loadPrefs(){const p=loadJSON(PREFS_KEY,{});state.includeNew=p.includeNew??true;state.tag=p.tag??'all';state.source=p.source??'all';state.technicality=p.technicality??'all';state.activeProfile=p.activeProfile??'none'}
+function savePrefs(){saveJSON(PREFS_KEY,{includeNew:state.includeNew,tag:state.tag,source:state.source,technicality:state.technicality,activeProfile:state.activeProfile})}
+function loadCustomCards(){state.customCards=loadJSON(CUSTOM_DECK_KEY,[])}
+function saveCustomCards(){saveJSON(CUSTOM_DECK_KEY,state.customCards)}
+function rebuildCards(){state.cards=[...state.baseCards.map(c=>({...c,source:'core'})),...state.customCards.map(c=>({...c,source:'custom'}))]}
+function loadProgress(){state.progress=loadJSON(STORAGE_KEY,{});for(const c of state.cards) if(!state.progress[c.id]) state.progress[c.id]=defaultProgress(c);saveJSON(STORAGE_KEY,state.progress)}
+
+function getProfile(){return state.profiles.find(p=>p.id===state.activeProfile)||null}
+function cardMatchesProfile(c){const p=getProfile();if(!p) return true;const m=p.match||{};const tags=new Set(c.tags||[]);const audiences=new Set(c.audiences||[]);const req=m.requireAnyTags||[];const tech=m.allowedTechnicality||[];const aud=m.includeAudiences||[];const tagOK=!req.length||req.some(t=>tags.has(t));const techOK=!tech.length||tech.includes(c.technicality||'intermediate');const audOK=!aud.length||aud.some(a=>audiences.has(a));return tagOK&&techOK&&audOK}
+function isDue(p){return p.due<=todayStr()}
+function cardMatchesFilters(c){const tagOK=state.tag==='all'||(c.tags||[]).includes(state.tag);const sourceOK=state.source==='all'||c.source===state.source;const techOK=state.technicality==='all'||(c.technicality||'intermediate')===state.technicality;return tagOK&&sourceOK&&techOK&&cardMatchesProfile(c)}
+
+function buildQueue(){const cards=state.cards.filter(cardMatchesFilters);const due=cards.filter(c=>isDue(state.progress[c.id]));const unseen=cards.filter(c=>state.progress[c.id].reps===0);state.queue=[...due];if(state.includeNew) state.queue.push(...unseen.filter(c=>!state.queue.some(q=>q.id===c.id)).slice(0,20));state.queue.sort((a,b)=>state.progress[a.id].due.localeCompare(state.progress[b.id].due));state.idx=0;renderProfileCoverage()}
+
+function renderProfileSelector(){el.profileSelect.innerHTML='<option value="none">none</option>';for(const p of state.profiles){const o=document.createElement('option');o.value=p.id;o.textContent=p.name;o.selected=p.id===state.activeProfile;el.profileSelect.appendChild(o)};renderProfileDescription()}
+function renderProfileDescription(){const p=getProfile();el.profileDescription.textContent=p?`${p.name}: ${p.description}`:'No active profile. Using global filters only.'}
+function renderProfileCoverage(){const total=state.cards.length, matching=state.cards.filter(cardMatchesFilters).length;el.profileCoverage.textContent=`Active set: ${matching}/${total} cards${state.activeProfile!=='none' ? ` (profile: ${state.activeProfile})` : ''}.`}
+
+function renderTagFilter(){const tags=new Set(['all']);state.cards.forEach(c=>(c.tags||[]).forEach(t=>tags.add(t)));el.tagFilter.innerHTML='';[...tags].sort().forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;o.selected=t===state.tag;el.tagFilter.appendChild(o)});el.sourceFilter.value=state.source;el.technicalityFilter.value=state.technicality;el.profileSelect.value=state.activeProfile}
+function summaryText(){const e=Object.values(state.progress);return `Total ${e.length} • Due ${e.filter(isDue).length} • Learned ${e.filter(x=>x.reps>0).length} • Custom ${state.customCards.length}`}
+function hideGrades(){[el.againBtn,el.hardBtn,el.goodBtn,el.easyBtn].forEach(b=>b.classList.add('hidden'))}
+function showGrades(){el.showBtn.classList.add('hidden');[el.againBtn,el.hardBtn,el.goodBtn,el.easyBtn].forEach(b=>b.classList.remove('hidden'))}
+function currentCard(){return state.queue[state.idx]||null}
+
+function renderTermTooltips(card){
+  const text=`${card.front} ${card.back}`.toLowerCase();
+  const terms=Object.keys(GLOSSARY).filter(t=>text.includes(t));
+  if(!terms.length){
+    el.tooltipHint.textContent='';
+    el.termChips.innerHTML='';
+    el.termTooltip.style.display='none';
+    el.termTooltip.textContent='';
+    return;
+  }
+  el.tooltipHint.textContent='Quick explainers available:';
+  el.termChips.innerHTML='';
+  terms.forEach(term=>{
+    const b=document.createElement('button');
+    b.className='ghost';
+    b.textContent=term.toUpperCase();
+    b.addEventListener('click',()=>{
+      el.termTooltip.style.display='block';
+      el.termTooltip.textContent=`${term.toUpperCase()}: ${GLOSSARY[term]}`;
+    });
+    el.termChips.appendChild(b);
+  });
+}
+
+function showCard(){const c=currentCard();if(!c){el.meta.textContent='Queue complete';el.front.textContent='No cards due with active filters/profile.';el.back.style.display='none';el.tags.innerHTML='';el.tooltipHint.textContent='';el.termChips.innerHTML='';el.termTooltip.style.display='none';hideGrades();el.status.textContent=summaryText();return;}const p=state.progress[c.id];el.meta.textContent=`${state.idx+1}/${state.queue.length} • ${c.source} • ${c.id} • ${c.technicality||'intermediate'} • due ${p.due} • reps ${p.reps}`;el.front.textContent=c.front;el.back.textContent=c.back;el.back.style.display='none';el.tags.innerHTML=[c.source,...(c.tags||[]),...(c.audiences||[]).map(a=>`aud:${a}`)].map(t=>`<span class="chip">${t}</span>`).join('');renderTermTooltips(c);hideGrades();el.showBtn.classList.remove('hidden');el.status.textContent=summaryText()}
+
+function gradeCard(g){const c=currentCard();if(!c)return;const p=state.progress[c.id];if(g==='again'){p.reps=0;p.interval=0;p.ease=Math.max(1.3,p.ease-.2);p.due=plusDays(0)}else{p.reps+=1;const q=g==='hard'?3:g==='good'?4:5;p.ease=Math.max(1.3,p.ease+(0.1-(5-q)*(0.08+(5-q)*0.02)));if(p.reps===1)p.interval=g==='easy'?3:1;else if(p.reps===2)p.interval=g==='easy'?7:3;else p.interval=Math.max(1,Math.round(p.interval*p.ease*(g==='hard'?1.2:g==='easy'?1.6:1.4)));p.due=plusDays(p.interval)}p.last=todayStr();saveJSON(STORAGE_KEY,state.progress);state.queue.splice(state.idx,1);if(state.idx>=state.queue.length)state.idx=Math.max(0,state.queue.length-1);showCard()}
+
+function refreshAll(){rebuildCards();loadProgress();renderProfileSelector();renderTagFilter();buildQueue();showCard()}
+
+async function ghGraphQL(query, variables={}){if(!state.gh.token) throw new Error('GitHub not authenticated.');const res=await fetch('https://api.github.com/graphql',{method:'POST',headers:{Authorization:`Bearer ${state.gh.token}`,'Content-Type':'application/json',Accept:'application/vnd.github+json'},body:JSON.stringify({query,variables})});const j=await res.json();if(!res.ok||j.errors) throw new Error(j.errors?.[0]?.message||`GitHub API error (${res.status})`);return j.data}
+function loadGitHubState(){state.gh.cfg=loadJSON(GH_CFG_KEY,state.gh.cfg);const a=loadJSON(GH_AUTH_KEY,{token:'',login:''});state.gh.token=a.token||'';state.gh.login=a.login||'';el.ghClientId.value=state.gh.cfg.clientId||'';el.ghRepo.value=state.gh.cfg.repo||'';el.ghCategoryId.value=state.gh.cfg.categoryId||'';el.ghScopes.value=state.gh.cfg.scopes||'public_repo';el.ghAuthState.textContent=state.gh.token?`Authenticated as @${state.gh.login}`:'Not authenticated.'}
+function saveGitHubCfgFromForm(){state.gh.cfg={clientId:el.ghClientId.value.trim(),repo:el.ghRepo.value.trim(),categoryId:el.ghCategoryId.value.trim(),scopes:el.ghScopes.value.trim()||'public_repo'};saveJSON(GH_CFG_KEY,state.gh.cfg);el.ghAuthState.textContent='Saved GitHub configuration.'}
+function clearGitHubAuth(){state.gh.token='';state.gh.login='';saveJSON(GH_AUTH_KEY,{token:'',login:''});el.ghAuthState.textContent='Not authenticated.'}
+async function startGitHubDeviceLogin(){saveGitHubCfgFromForm();if(!state.gh.cfg.clientId){el.ghDeviceState.textContent='Client ID required.';return;}const body=new URLSearchParams({client_id:state.gh.cfg.clientId,scope:state.gh.cfg.scopes});const dcRes=await fetch('https://github.com/login/device/code',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/x-www-form-urlencoded'},body});const dc=await dcRes.json();if(!dcRes.ok||dc.error){el.ghDeviceState.textContent=`Device code error: ${dc.error_description||dc.error||dcRes.status}`;return;}const verify=dc.verification_uri||'https://github.com/login/device';el.ghDeviceState.innerHTML=`1) Open <a target="_blank" rel="noreferrer" href="${verify}">${verify}</a> 2) Enter code <strong>${dc.user_code}</strong>. Waiting...`;let interval=(dc.interval||5)*1000;const start=Date.now();while(Date.now()-start<((dc.expires_in||900)*1000)){await new Promise(r=>setTimeout(r,interval));const tokenBody=new URLSearchParams({client_id:state.gh.cfg.clientId,device_code:dc.device_code,grant_type:'urn:ietf:params:oauth:grant-type:device_code'});const tkRes=await fetch('https://github.com/login/oauth/access_token',{method:'POST',headers:{Accept:'application/json','Content-Type':'application/x-www-form-urlencoded'},body:tokenBody});const tk=await tkRes.json();if(tk.error==='authorization_pending')continue;if(tk.error==='slow_down'){interval+=5000;continue}if(tk.error){el.ghDeviceState.textContent=`Login failed: ${tk.error_description||tk.error}`;return}if(!tk.access_token){el.ghDeviceState.textContent='Login failed: no access token returned.';return}const viewer=await fetch('https://api.github.com/user',{headers:{Authorization:`Bearer ${tk.access_token}`,Accept:'application/vnd.github+json'}}).then(r=>r.json());state.gh.token=tk.access_token;state.gh.login=viewer.login||'unknown';saveJSON(GH_AUTH_KEY,{token:state.gh.token,login:state.gh.login});el.ghAuthState.textContent=`Authenticated as @${state.gh.login}`;el.ghDeviceState.textContent='GitHub login successful.';return;}el.ghDeviceState.textContent='Device login timed out.'}
+
+async function loadDiscussionCategories(){saveGitHubCfgFromForm();if(!state.gh.cfg.repo.includes('/')){el.ghCategoryState.textContent='Repository must be owner/repo.';return;}const [owner,name]=state.gh.cfg.repo.split('/');const q=`query($owner:String!,$name:String!){repository(owner:$owner,name:$name){discussionCategories(first:20){nodes{id name}}}}`;const d=await ghGraphQL(q,{owner,name});const cats=d.repository.discussionCategories.nodes||[];if(!cats.length){el.ghCategoryState.textContent='No categories found.';return;}el.ghCategoryState.innerHTML=cats.map(c=>`${c.name}: <code>${c.id}</code>`).join(' • ');if(!state.gh.cfg.categoryId){el.ghCategoryId.value=cats[0].id;saveGitHubCfgFromForm();}}
+
+async function createCardDiscussion(){const c=currentCard();if(!c){el.ghSubmitState.textContent='No current card.';return;}if(!state.gh.token){el.ghSubmitState.textContent='Authenticate first.';return;}saveGitHubCfgFromForm();if(!state.gh.cfg.repo.includes('/')){el.ghSubmitState.textContent='Repository must be owner/repo.';return;}const feedback=el.ghFeedbackBody.value.trim();if(!feedback){el.ghSubmitState.textContent='Feedback text required.';return;}const [owner,name]=state.gh.cfg.repo.split('/');const rq=`query($owner:String!,$name:String!){repository(owner:$owner,name:$name){id discussionCategories(first:20){nodes{id}}}}`;const rd=await ghGraphQL(rq,{owner,name});const repositoryId=rd.repository.id;const categoryId=state.gh.cfg.categoryId||rd.repository.discussionCategories.nodes?.[0]?.id;if(!categoryId){el.ghSubmitState.textContent='No category ID available.';return;}const title=`[card:${c.id}] ${c.front.length>90?c.front.slice(0,90)+'…':c.front}`;const body=[`### Flashcard feedback`,``,`- Card ID: \`${c.id}\``,`- Tags: ${(c.tags||[]).join(', ')}` ,`- Technicality: ${c.technicality||'intermediate'}`,`- Submitted by: @${state.gh.login}` ,``,'### Card front',c.front,'','### Current answer',c.back,'','### Proposed update',feedback,'','_Generated from mirrord flashcards app._'].join('\n');const mut=`mutation($repositoryId:ID!,$categoryId:ID!,$title:String!,$body:String!){createDiscussion(input:{repositoryId:$repositoryId,categoryId:$categoryId,title:$title,body:$body}){discussion{url number title}}}`;const out=await ghGraphQL(mut,{repositoryId,categoryId,title,body});const d=out.createDiscussion.discussion;el.ghSubmitState.innerHTML=`Discussion created: <a target="_blank" rel="noreferrer" href="${d.url}">#${d.number} ${d.title}</a>`;el.ghFeedbackBody.value=''}
+
+function addCustomCard(){const front=el.newFront.value.trim(), back=el.newBack.value.trim();if(!front||!back){el.addCardStatus.textContent='Question and answer required.';return;}const tags=parseTags(el.newTags.value);state.customCards.unshift({id:`custom-${Date.now()}`,front,back,tags:tags.length?tags:['custom'],difficulty:Number(el.newDifficulty.value||2),technicality:el.newTechnicality.value||'intermediate',audiences:['devrel'],tracks:['learning']});saveCustomCards();el.newFront.value='';el.newBack.value='';el.newTags.value='';el.newDifficulty.value='2';el.newTechnicality.value='intermediate';el.addCardStatus.textContent='Card added.';refreshAll()}
+
+async function loadBase(){state.baseCards=await fetch('./cards.json').then(r=>r.json());state.profiles=await fetch('./profiles.json').then(r=>r.json())}
+
+el.showBtn.addEventListener('click',()=>{el.back.style.display='block';showGrades()});el.againBtn.addEventListener('click',()=>gradeCard('again'));el.hardBtn.addEventListener('click',()=>gradeCard('hard'));el.goodBtn.addEventListener('click',()=>gradeCard('good'));el.easyBtn.addEventListener('click',()=>gradeCard('easy'));
+el.newModeBtn.addEventListener('click',()=>{state.includeNew=!state.includeNew;savePrefs();buildQueue();showCard()});
+el.shuffleBtn.addEventListener('click',()=>{for(let i=state.queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[state.queue[i],state.queue[j]]=[state.queue[j],state.queue[i]];}state.idx=0;showCard()});
+el.tagFilter.addEventListener('change',e=>{state.tag=e.target.value;savePrefs();buildQueue();showCard()});el.sourceFilter.addEventListener('change',e=>{state.source=e.target.value;savePrefs();buildQueue();showCard()});el.technicalityFilter.addEventListener('change',e=>{state.technicality=e.target.value;savePrefs();buildQueue();showCard()});
+el.applyProfileBtn.addEventListener('click',()=>{state.activeProfile=el.profileSelect.value;savePrefs();renderProfileDescription();buildQueue();showCard()});
+el.clearProfileBtn.addEventListener('click',()=>{state.activeProfile='none';el.profileSelect.value='none';savePrefs();renderProfileDescription();buildQueue();showCard()});
+
+el.exportBtn.addEventListener('click',()=>{const b=new Blob([JSON.stringify({progress:state.progress,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`mirrord-flashcards-progress-${todayStr()}.json`;a.click();URL.revokeObjectURL(a.href)});
+el.exportDeckBtn.addEventListener('click',()=>{const b=new Blob([JSON.stringify({customCards:state.customCards,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`mirrord-flashcards-custom-cards-${todayStr()}.json`;a.click();URL.revokeObjectURL(a.href)});
+
+el.importProgressInput.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const p=JSON.parse(await f.text());if(!p.progress||typeof p.progress!=='object') throw new Error();state.progress={...state.progress,...p.progress};saveJSON(STORAGE_KEY,state.progress);buildQueue();showCard()}catch{alert('Invalid progress file.')}e.target.value=''});
+el.importDeckInput.addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const p=JSON.parse(await f.text());const cards=(p.customCards||p.cards||[]).filter(c=>c&&c.front&&c.back).map(c=>({id:c.id||`custom-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,front:String(c.front).trim(),back:String(c.back).trim(),tags:Array.isArray(c.tags)&&c.tags.length?c.tags.map(t=>String(t).toLowerCase()):['custom'],difficulty:Number(c.difficulty||2),technicality:c.technicality||'intermediate',audiences:Array.isArray(c.audiences)?c.audiences:['devrel'],tracks:Array.isArray(c.tracks)?c.tracks:['learning']}));state.customCards=[...cards,...state.customCards];saveCustomCards();refreshAll()}catch{alert('Invalid custom cards file.')}e.target.value=''});
+
+el.addCardBtn.addEventListener('click',addCustomCard);el.resetBtn.addEventListener('click',()=>{if(!confirm('Reset all progress?'))return;state.progress={};loadProgress();buildQueue();showCard()});el.clearCustomBtn.addEventListener('click',()=>{if(!confirm('Delete all custom cards?'))return;state.customCards=[];saveCustomCards();refreshAll()});
+el.ghSaveConfigBtn.addEventListener('click',saveGitHubCfgFromForm);el.ghStartLoginBtn.addEventListener('click',()=>startGitHubDeviceLogin().catch(err=>el.ghDeviceState.textContent=`Login error: ${err.message}`));el.ghLoadCategoriesBtn.addEventListener('click',()=>loadDiscussionCategories().catch(err=>el.ghCategoryState.textContent=`Category load error: ${err.message}`));el.ghLogoutBtn.addEventListener('click',clearGitHubAuth);el.ghCreateDiscussionBtn.addEventListener('click',()=>createCardDiscussion().catch(err=>el.ghSubmitState.textContent=`Submit error: ${err.message}`));
+
+(async function init(){await loadBase();loadPrefs();loadCustomCards();loadGitHubState();refreshAll()})();
+</script>
+</body>
+</html>
