@@ -20,10 +20,8 @@
     min-height: 100vh;
     transition: background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
   }
-  /* Invert the dark mirror logo so it reads on dark surfaces */
   [data-theme="dark"] .brand-mark { filter: invert(1) hue-rotate(180deg); }
 
-  /* Theme toggle button */
   .theme-toggle {
     width: 36px; height: 36px; border-radius: 50%;
     display: inline-flex; align-items: center; justify-content: center;
@@ -52,11 +50,7 @@
     margin-bottom: var(--s-6); flex-wrap: wrap;
   }
   .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-mark {
-    width: 44px; height: auto;
-    flex-shrink: 0;
-    display: block;
-  }
+  .brand-mark { width: 44px; height: auto; flex-shrink: 0; display: block; }
   .brand-name {
     font-family: var(--font-display);
     font-weight: 600; font-size: 1.1rem; color: var(--ink-900); letter-spacing: -0.01em;
@@ -66,7 +60,6 @@
     font-family: var(--font-mono); font-size: 10px; color: var(--ink-500);
     letter-spacing: var(--tr-wide); text-transform: uppercase;
   }
-
   .header-actions { display: flex; gap: var(--s-2); flex-wrap: wrap; }
 
   /* ========= Buttons ========= */
@@ -77,8 +70,7 @@
     border: 1px solid transparent; cursor: pointer; text-decoration: none;
     transition: transform var(--dur-fast) var(--ease-out),
                 background var(--dur-base), box-shadow var(--dur-base), border-color var(--dur-base);
-    white-space: nowrap; color: var(--ink-800);
-    background: transparent;
+    white-space: nowrap; color: var(--ink-800); background: transparent;
   }
   .btn:active { transform: translateY(1px); }
   .btn-primary {
@@ -92,17 +84,11 @@
   .btn-secondary:hover { border-color: var(--iris-500); color: var(--iris-600); }
   .btn-ghost { color: var(--ink-700); }
   .btn-ghost:hover { background: var(--paper-100); }
-  .btn-good {
-    background: #E7F5EC; color: #1E6B43; border-color: #B7DFC4;
-  }
+  .btn-good { background: #E7F5EC; color: #1E6B43; border-color: #B7DFC4; }
   .btn-good:hover { background: #D4EEDC; border-color: var(--success); }
-  .btn-hard {
-    background: var(--amber-100); color: var(--amber-600); border-color: #F1D59A;
-  }
+  .btn-hard { background: var(--amber-100); color: var(--amber-600); border-color: #F1D59A; }
   .btn-hard:hover { background: #FFE4B3; border-color: var(--amber-500); }
-  .btn-again {
-    background: #FBE3E6; color: var(--danger); border-color: #EFC3C9;
-  }
+  .btn-again { background: #FBE3E6; color: var(--danger); border-color: #EFC3C9; }
   .btn-again:hover { background: #F8CED4; border-color: var(--danger); }
   .btn-sm { padding: 6px 12px; font-size: var(--fs-xs); }
   .btn-lg { padding: 12px 22px; font-size: var(--fs-body); }
@@ -191,6 +177,25 @@
   }
   .chip-source-core   { background: var(--iris-100); color: var(--iris-700); border-color: transparent; }
   .chip-source-custom { background: var(--amber-100); color: var(--amber-600); border-color: transparent; }
+  .chip-audience { background: var(--paper-100); color: var(--ink-500); border-color: transparent; font-size: 10px; }
+
+  /* ========= Term tooltips ========= */
+  .tooltip-hint {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-500);
+    margin-top: var(--s-3); letter-spacing: 0.02em;
+  }
+  .term-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: var(--s-2); }
+  .term-chips .btn { padding: 4px 10px; font-size: 11px; font-family: var(--font-mono); }
+  .term-tooltip {
+    background: var(--iris-50);
+    border: 1px solid var(--iris-300);
+    border-radius: var(--r-md);
+    padding: var(--s-3) var(--s-4);
+    font-size: var(--fs-sm); color: var(--ink-700);
+    margin-top: var(--s-3);
+    display: none;
+    animation: fadein var(--dur-base) var(--ease-out);
+  }
 
   .flashcard-actions {
     padding: var(--s-5) var(--s-6) var(--s-6);
@@ -233,6 +238,27 @@
   }
   .status-pill b { color: var(--ink-900); font-weight: 600; }
 
+  /* ========= Profile panel ========= */
+  .profile-panel {
+    margin-top: var(--s-4);
+    background: var(--paper-0);
+    border: var(--border-soft);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-xs);
+    padding: var(--s-4);
+  }
+  .profile-panel .panel-title { font-size: 0.9375rem; margin-bottom: var(--s-3); }
+  .profile-row {
+    display: flex; gap: var(--s-3); flex-wrap: wrap; align-items: center;
+  }
+  .profile-desc {
+    font-size: var(--fs-sm); color: var(--ink-500); margin-top: var(--s-2);
+  }
+  .profile-coverage {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-500);
+    margin-top: var(--s-2); letter-spacing: 0.02em;
+  }
+
   /* ========= Author panel ========= */
   .panel {
     margin-top: var(--s-6);
@@ -247,8 +273,7 @@
     display: flex; justify-content: space-between; align-items: flex-start; gap: var(--s-3);
     flex-wrap: wrap;
   }
-
-  .panel-sub   { font-size: var(--fs-sm); color: var(--ink-500); margin-top: 4px; max-width: 48ch; }
+  .panel-sub { font-size: var(--fs-sm); color: var(--ink-500); margin-top: 4px; max-width: 48ch; }
   .panel-toggle {
     font-family: var(--font-mono); font-size: 11px; letter-spacing: var(--tr-wide);
     text-transform: uppercase; color: var(--ink-500); background: none; border: 0; cursor: pointer;
@@ -290,20 +315,34 @@
     letter-spacing: var(--tr-wide); color: var(--ink-500);
   }
 
-  /* ========= Empty / complete state ========= */
-  .empty {
-    text-align: center; padding: var(--s-7) var(--s-5);
+  /* ========= GitHub feedback panel ========= */
+  .gh-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); margin-top: var(--s-3); }
+  .gh-grid input {
+    font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--ink-800);
+    padding: 7px 12px; border-radius: var(--r-md);
+    border: 1px solid var(--paper-300); background: var(--paper-0);
+    width: 100%;
   }
+  .gh-status {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-500);
+    margin-top: var(--s-2); min-height: 14px;
+  }
+  .gh-status a { color: var(--iris-500); }
+  .gh-divider {
+    border: none; border-top: 1px dashed var(--paper-200); margin: var(--s-4) 0;
+  }
+
+  /* ========= Empty / complete state ========= */
+  .empty { text-align: center; padding: var(--s-7) var(--s-5); }
   .empty-icon {
     width: 56px; height: 56px; border-radius: 50%;
     background: radial-gradient(circle at 30% 30%, var(--iris-300), var(--iris-500));
     margin: 0 auto var(--s-4);
     box-shadow: var(--shadow-glow-iris);
   }
-  .empty h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
   .empty h3 {
-    font-size: 1.25rem; font-weight: 600; color: var(--ink-900);
-    letter-spacing: var(--tr-snug); margin-bottom: 8px;
+    font-family: var(--font-display); font-size: 1.25rem; font-weight: 600;
+    color: var(--ink-900); letter-spacing: var(--tr-snug); margin-bottom: 8px;
   }
   .empty p { color: var(--ink-500); font-size: var(--fs-sm); max-width: 40ch; margin: 0 auto; }
 
@@ -320,7 +359,7 @@
   @media (max-width: 680px) {
     .container { padding: var(--s-4); }
     .prompt { font-size: 1.2rem; }
-    .grid { grid-template-columns: 1fr; }
+    .grid, .gh-grid { grid-template-columns: 1fr; }
     .grade-row { flex-wrap: wrap; }
     .grade-row .btn { flex: 1 1 calc(50% - 4px); }
     .status-pill { margin-left: 0; }
@@ -338,7 +377,7 @@
       <img class="brand-mark" src="logo.png" alt="mirrord mirror mascot" />
       <div>
         <div class="brand-name"><em>mirrord</em> flashcards</div>
-        <div class="brand-sub">deep-dive · spaced repetition</div>
+        <div class="brand-sub">profiles · spaced repetition · feedback</div>
       </div>
     </div>
     <div class="header-actions">
@@ -353,8 +392,32 @@
     </div>
   </header>
 
+  <!-- ===== Learning Profile ===== -->
+  <div class="profile-panel">
+    <div class="panel-title">Learning profile</div>
+    <div class="profile-row">
+      <div class="filter-group">
+        <label for="profileSelect">Profile</label>
+        <select id="profileSelect"></select>
+      </div>
+      <button id="applyProfileBtn" class="btn btn-primary btn-sm">Apply</button>
+      <button id="clearProfileBtn" class="btn btn-ghost btn-sm">Clear</button>
+      <div class="filter-group">
+        <label for="technicalityFilter">Technicality</label>
+        <select id="technicalityFilter">
+          <option value="all">all</option>
+          <option value="basic">basic</option>
+          <option value="intermediate">intermediate</option>
+          <option value="advanced">advanced</option>
+        </select>
+      </div>
+    </div>
+    <div class="profile-desc" id="profileDescription"></div>
+    <div class="profile-coverage" id="profileCoverage"></div>
+  </div>
+
   <!-- ===== Flashcard ===== -->
-  <section class="flashcard" id="cardWrap">
+  <section class="flashcard" id="cardWrap" style="margin-top: var(--s-4);">
     <div class="flashcard-head">
       <div class="meta" id="meta">loading…</div>
       <div class="progress-track" title="queue progress"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
@@ -364,6 +427,9 @@
       <div class="prompt" id="front">—</div>
       <div class="answer" id="back"></div>
       <div class="chips" id="tags"></div>
+      <div class="tooltip-hint" id="tooltipHint"></div>
+      <div class="term-chips" id="termChips"></div>
+      <div class="term-tooltip" id="termTooltip"></div>
     </div>
     <div class="flashcard-actions" id="actions">
       <button id="showBtn" class="btn btn-primary btn-lg" style="flex: 1 1 100%;">Show answer</button>
@@ -393,6 +459,58 @@
     <div class="status-pill" id="status">—</div>
   </div>
 
+  <!-- ===== GitHub feedback panel ===== -->
+  <section class="panel" style="margin-top: var(--s-4);">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">GitHub feedback</div>
+        <div class="panel-sub">Authenticate with Device Flow and open a card-linked Discussion.</div>
+      </div>
+      <button class="panel-toggle" id="ghPanelToggle" aria-expanded="false">
+        <span id="ghPanelToggleLabel">Expand</span>
+        <span id="ghPanelToggleIcon">+</span>
+      </button>
+    </div>
+    <div class="panel-body collapsed" id="ghPanelBody">
+      <div class="gh-grid">
+        <div>
+          <label for="ghClientId" class="field-label">OAuth client ID</label>
+          <input id="ghClientId" type="text" placeholder="Iv1..." />
+        </div>
+        <div>
+          <label for="ghRepo" class="field-label">Repository</label>
+          <input id="ghRepo" type="text" placeholder="owner/repo" />
+        </div>
+      </div>
+      <div class="gh-grid">
+        <div>
+          <label for="ghCategoryId" class="field-label">Discussion category ID</label>
+          <input id="ghCategoryId" type="text" />
+        </div>
+        <div>
+          <label for="ghScopes" class="field-label">Scopes</label>
+          <input id="ghScopes" type="text" value="public_repo" />
+        </div>
+      </div>
+      <div class="author-row">
+        <button id="ghSaveConfigBtn" class="btn btn-secondary btn-sm">Save config</button>
+        <button id="ghStartLoginBtn" class="btn btn-primary btn-sm">Login with GitHub</button>
+        <button id="ghLoadCategoriesBtn" class="btn btn-ghost btn-sm">Load categories</button>
+        <button id="ghLogoutBtn" class="btn btn-again btn-sm">Logout</button>
+      </div>
+      <div class="gh-status" id="ghAuthState"></div>
+      <div class="gh-status" id="ghDeviceState"></div>
+      <div class="gh-status" id="ghCategoryState"></div>
+      <hr class="gh-divider">
+      <label for="ghFeedbackBody" class="field-label">Feedback for current card</label>
+      <textarea id="ghFeedbackBody" placeholder="What should change? Why?" style="min-height: 72px;"></textarea>
+      <div class="author-row" style="margin-top: var(--s-3);">
+        <button id="ghCreateDiscussionBtn" class="btn btn-primary btn-sm">Create discussion for this card</button>
+      </div>
+      <div class="gh-status" id="ghSubmitState"></div>
+    </div>
+  </section>
+
   <!-- ===== Author panel ===== -->
   <section class="panel">
     <div class="panel-head">
@@ -402,7 +520,7 @@
       </div>
       <button class="panel-toggle" id="panelToggle" aria-expanded="true">
         <span id="panelToggleLabel">Collapse</span>
-        <span id="panelToggleIcon">−</span>
+        <span id="panelToggleIcon">&minus;</span>
       </button>
     </div>
     <div class="panel-body" id="panelBody">
@@ -425,6 +543,11 @@
           <option value="4">difficulty 4</option>
           <option value="5">difficulty 5</option>
         </select>
+        <select id="newTechnicality">
+          <option value="basic">basic</option>
+          <option value="intermediate" selected>intermediate</option>
+          <option value="advanced">advanced</option>
+        </select>
         <button id="addCardBtn" class="btn btn-primary">Add card</button>
       </div>
       <div class="add-status" id="addCardStatus"></div>
@@ -441,21 +564,25 @@
   </section>
 
   <footer class="footer">
-    Built with <em>cloudforge</em> design system · answer in the order: what → why → step-by-step → safety.
+    Built with <em>cloudforge</em> design system · answer in the order: what &rarr; why &rarr; step-by-step &rarr; safety.
   </footer>
 </div>
 
 <script>
   // ================================================================
-  // Logic preserved from original — only rendering shell is new.
-  // Same storage keys so progress carries over from the old UI.
+  // Merged logic: PR #2 features (profiles, GitHub Discussions,
+  // tooltips, technicality) + PR #3 Cloudforge rendering shell.
+  // Storage keys match PR #2 (v4) for forward compatibility.
   // ================================================================
-  const STORAGE_KEY = 'mirrord_flashcards_progress_v2';
-  const PREFS_KEY = 'mirrord_flashcards_prefs_v2';
+  const STORAGE_KEY = 'mirrord_flashcards_progress_v4';
+  const PREFS_KEY = 'mirrord_flashcards_prefs_v4';
   const CUSTOM_DECK_KEY = 'mirrord_flashcards_custom_cards_v1';
+  const GH_AUTH_KEY = 'mirrord_flashcards_github_auth_v1';
+  const GH_CFG_KEY = 'mirrord_flashcards_github_cfg_v1';
 
   const state = {
     baseCards: [],
+    profiles: [],
     customCards: [],
     cards: [],
     progress: {},
@@ -464,7 +591,27 @@
     initialQueueLen: 0,
     includeNew: true,
     tag: 'all',
-    source: 'all'
+    source: 'all',
+    technicality: 'all',
+    activeProfile: 'none',
+    gh: { token: '', login: '', cfg: { clientId: '', repo: '', categoryId: '', scopes: 'public_repo' } }
+  };
+
+  const GLOSSARY = {
+    udp: 'UDP is a lightweight transport protocol: fast, no built-in delivery/order guarantees.',
+    tcp: 'TCP is a reliable transport protocol with ordered delivery and connection semantics.',
+    protocol: 'A protocol is a set of communication rules used by systems over a network.',
+    oci: 'OCI is the standard format/spec for container images and runtimes.',
+    dns: 'DNS translates service/domain names into network addresses.',
+    kubernetes: 'Kubernetes orchestrates containerized workloads across nodes.',
+    pod: 'A pod is Kubernetes\' smallest deployable unit; one or more containers share context.',
+    tls: 'TLS encrypts traffic in transit and helps ensure data confidentiality/integrity.',
+    cidr: 'CIDR is notation for IP ranges used in routing and policy rules.',
+    timeout: 'Timeout is the maximum wait time before giving up an operation.',
+    retry: 'Retry means attempting an operation again after failure, usually with limits/backoff.',
+    latency: 'Latency is the time delay between request and response.',
+    api: 'An API is an interface allowing software components to communicate.',
+    service: 'In Kubernetes, a Service is a stable network endpoint for a dynamic pod set.'
   };
 
   const el = {
@@ -487,6 +634,12 @@
     shuffleBtn: document.getElementById('shuffleBtn'),
     tagFilter: document.getElementById('tagFilter'),
     sourceFilter: document.getElementById('sourceFilter'),
+    technicalityFilter: document.getElementById('technicalityFilter'),
+    profileSelect: document.getElementById('profileSelect'),
+    applyProfileBtn: document.getElementById('applyProfileBtn'),
+    clearProfileBtn: document.getElementById('clearProfileBtn'),
+    profileDescription: document.getElementById('profileDescription'),
+    profileCoverage: document.getElementById('profileCoverage'),
     importProgressInput: document.getElementById('importProgressInput'),
     importDeckInput: document.getElementById('importDeckInput'),
     exportDeckBtn: document.getElementById('exportDeckBtn'),
@@ -494,6 +647,7 @@
     newBack: document.getElementById('newBack'),
     newTags: document.getElementById('newTags'),
     newDifficulty: document.getElementById('newDifficulty'),
+    newTechnicality: document.getElementById('newTechnicality'),
     addCardBtn: document.getElementById('addCardBtn'),
     addCardStatus: document.getElementById('addCardStatus'),
     clearCustomBtn: document.getElementById('clearCustomBtn'),
@@ -502,7 +656,28 @@
     panelToggle: document.getElementById('panelToggle'),
     panelBody: document.getElementById('panelBody'),
     panelToggleLabel: document.getElementById('panelToggleLabel'),
-    panelToggleIcon: document.getElementById('panelToggleIcon')
+    panelToggleIcon: document.getElementById('panelToggleIcon'),
+    tooltipHint: document.getElementById('tooltipHint'),
+    termChips: document.getElementById('termChips'),
+    termTooltip: document.getElementById('termTooltip'),
+    ghClientId: document.getElementById('ghClientId'),
+    ghRepo: document.getElementById('ghRepo'),
+    ghCategoryId: document.getElementById('ghCategoryId'),
+    ghScopes: document.getElementById('ghScopes'),
+    ghSaveConfigBtn: document.getElementById('ghSaveConfigBtn'),
+    ghStartLoginBtn: document.getElementById('ghStartLoginBtn'),
+    ghLoadCategoriesBtn: document.getElementById('ghLoadCategoriesBtn'),
+    ghLogoutBtn: document.getElementById('ghLogoutBtn'),
+    ghAuthState: document.getElementById('ghAuthState'),
+    ghDeviceState: document.getElementById('ghDeviceState'),
+    ghCategoryState: document.getElementById('ghCategoryState'),
+    ghFeedbackBody: document.getElementById('ghFeedbackBody'),
+    ghCreateDiscussionBtn: document.getElementById('ghCreateDiscussionBtn'),
+    ghSubmitState: document.getElementById('ghSubmitState'),
+    ghPanelToggle: document.getElementById('ghPanelToggle'),
+    ghPanelBody: document.getElementById('ghPanelBody'),
+    ghPanelToggleLabel: document.getElementById('ghPanelToggleLabel'),
+    ghPanelToggleIcon: document.getElementById('ghPanelToggleIcon')
   };
 
   const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -511,6 +686,8 @@
     x.setDate(x.getDate() + d);
     return x.toISOString().slice(0, 10);
   };
+  const saveJSON = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+  const loadJSON = (k, f) => { const r = localStorage.getItem(k); return r ? JSON.parse(r) : f; };
 
   function parseTags(raw) {
     return (raw || '').split(',').map(t => t.trim().toLowerCase()).filter(Boolean);
@@ -521,34 +698,30 @@
   }
 
   function loadProgress() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    state.progress = raw ? JSON.parse(raw) : {};
+    state.progress = loadJSON(STORAGE_KEY, {});
     for (const card of state.cards) {
       if (!state.progress[card.id]) state.progress[card.id] = defaultProgress(card);
     }
-    saveProgress();
+    saveJSON(STORAGE_KEY, state.progress);
   }
-  function saveProgress() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.progress)); }
 
   function loadPrefs() {
-    const raw = localStorage.getItem(PREFS_KEY);
-    if (!raw) return;
-    const p = JSON.parse(raw);
+    const p = loadJSON(PREFS_KEY, {});
     state.includeNew = p.includeNew ?? true;
     state.tag = p.tag ?? 'all';
     state.source = p.source ?? 'all';
+    state.technicality = p.technicality ?? 'all';
+    state.activeProfile = p.activeProfile ?? 'none';
   }
   function savePrefs() {
-    localStorage.setItem(PREFS_KEY, JSON.stringify({
-      includeNew: state.includeNew, tag: state.tag, source: state.source
-    }));
+    saveJSON(PREFS_KEY, {
+      includeNew: state.includeNew, tag: state.tag, source: state.source,
+      technicality: state.technicality, activeProfile: state.activeProfile
+    });
   }
 
-  function loadCustomCards() {
-    const raw = localStorage.getItem(CUSTOM_DECK_KEY);
-    state.customCards = raw ? JSON.parse(raw) : [];
-  }
-  function saveCustomCards() { localStorage.setItem(CUSTOM_DECK_KEY, JSON.stringify(state.customCards)); }
+  function loadCustomCards() { state.customCards = loadJSON(CUSTOM_DECK_KEY, []); }
+  function saveCustomCards() { saveJSON(CUSTOM_DECK_KEY, state.customCards); }
 
   function rebuildCards() {
     state.cards = [
@@ -557,12 +730,29 @@
     ];
   }
 
+  function getProfile() { return state.profiles.find(p => p.id === state.activeProfile) || null; }
+  function cardMatchesProfile(c) {
+    const p = getProfile();
+    if (!p) return true;
+    const m = p.match || {};
+    const tags = new Set(c.tags || []);
+    const audiences = new Set(c.audiences || []);
+    const req = m.requireAnyTags || [];
+    const tech = m.allowedTechnicality || [];
+    const aud = m.includeAudiences || [];
+    const tagOK = !req.length || req.some(t => tags.has(t));
+    const techOK = !tech.length || tech.includes(c.technicality || 'intermediate');
+    const audOK = !aud.length || aud.some(a => audiences.has(a));
+    return tagOK && techOK && audOK;
+  }
+
   function isDue(p) { return p.due <= todayStr(); }
 
   function cardMatchesFilters(card) {
-    const tagOk = state.tag === 'all' || card.tags.includes(state.tag);
+    const tagOk = state.tag === 'all' || (card.tags || []).includes(state.tag);
     const sourceOk = state.source === 'all' || card.source === state.source;
-    return tagOk && sourceOk;
+    const techOk = state.technicality === 'all' || (card.technicality || 'intermediate') === state.technicality;
+    return tagOk && sourceOk && techOk && cardMatchesProfile(card);
   }
 
   function buildQueue() {
@@ -572,11 +762,12 @@
     state.queue = [...due];
     if (state.includeNew) {
       const unseenNotQueued = unseen.filter(c => !state.queue.some(q => q.id === c.id));
-      state.queue.push(...unseenNotQueued.slice(0, 16));
+      state.queue.push(...unseenNotQueued.slice(0, 20));
     }
     state.queue.sort((a, b) => state.progress[a.id].due.localeCompare(state.progress[b.id].due));
     state.idx = 0;
     state.initialQueueLen = state.queue.length;
+    renderProfileCoverage();
   }
 
   function shuffleQueue() {
@@ -587,15 +778,67 @@
     state.idx = 0;
   }
 
+  // ===== Profile rendering =====
+  function renderProfileSelector() {
+    el.profileSelect.innerHTML = '<option value="none">none</option>';
+    for (const p of state.profiles) {
+      const o = document.createElement('option');
+      o.value = p.id; o.textContent = p.name;
+      o.selected = p.id === state.activeProfile;
+      el.profileSelect.appendChild(o);
+    }
+    renderProfileDescription();
+  }
+  function renderProfileDescription() {
+    const p = getProfile();
+    el.profileDescription.textContent = p
+      ? `${p.name}: ${p.description}`
+      : 'No active profile. Using global filters only.';
+  }
+  function renderProfileCoverage() {
+    const total = state.cards.length;
+    const matching = state.cards.filter(cardMatchesFilters).length;
+    el.profileCoverage.textContent = `Active set: ${matching}/${total} cards` +
+      (state.activeProfile !== 'none' ? ` (profile: ${state.activeProfile})` : '') + '.';
+  }
+
   function renderTagFilter() {
     const set = new Set(['all']);
-    state.cards.forEach(c => c.tags.forEach(t => set.add(t)));
+    state.cards.forEach(c => (c.tags || []).forEach(t => set.add(t)));
     el.tagFilter.innerHTML = '';
     [...set].sort().forEach(tag => {
       const opt = document.createElement('option');
       opt.value = tag; opt.textContent = tag;
       opt.selected = tag === state.tag;
       el.tagFilter.appendChild(opt);
+    });
+    el.sourceFilter.value = state.source;
+    el.technicalityFilter.value = state.technicality;
+    el.profileSelect.value = state.activeProfile;
+  }
+
+  // ===== Term tooltips =====
+  function renderTermTooltips(card) {
+    const text = `${card.front} ${card.back}`.toLowerCase();
+    const terms = Object.keys(GLOSSARY).filter(t => text.includes(t));
+    if (!terms.length) {
+      el.tooltipHint.textContent = '';
+      el.termChips.innerHTML = '';
+      el.termTooltip.style.display = 'none';
+      el.termTooltip.textContent = '';
+      return;
+    }
+    el.tooltipHint.textContent = 'Quick explainers available:';
+    el.termChips.innerHTML = '';
+    terms.forEach(term => {
+      const b = document.createElement('button');
+      b.className = 'btn btn-ghost btn-sm';
+      b.textContent = term.toUpperCase();
+      b.addEventListener('click', () => {
+        el.termTooltip.style.display = 'block';
+        el.termTooltip.textContent = `${term.toUpperCase()}: ${GLOSSARY[term]}`;
+      });
+      el.termChips.appendChild(b);
     });
   }
 
@@ -604,9 +847,11 @@
       <div class="empty">
         <div class="empty-icon" aria-hidden="true"></div>
         <h3>Queue complete.</h3>
-        <p>No cards due with the current filter. Toggle <em>Include new</em> or adjust tag / source to keep studying.</p>
+        <p>No cards due with the current filter/profile. Toggle <em>Include new</em> or adjust filters to keep studying.</p>
       </div>`;
   }
+
+  function currentCard() { return state.queue[state.idx] || null; }
 
   function showCard() {
     if (!state.queue.length) {
@@ -614,7 +859,6 @@
       el.status.innerHTML = summaryText();
       return;
     }
-    // Ensure card chrome exists (re-mount if previously emptied)
     if (!document.getElementById('front')) mountCardChrome();
 
     const card = state.queue[state.idx];
@@ -623,6 +867,7 @@
 
     document.getElementById('meta').innerHTML =
       `<span><strong>${state.idx + 1}</strong> / ${state.queue.length}</span>
+       <span>${card.technicality || 'intermediate'}</span>
        <span>due <strong>${p.due}</strong></span>
        <span>reps <strong>${p.reps}</strong></span>
        <span>ease <strong>${p.ease.toFixed(2)}</strong></span>`;
@@ -633,9 +878,14 @@
     backEl.textContent = card.back;
     backEl.classList.remove('visible');
 
-    document.getElementById('tags').innerHTML =
-      `<span class="chip ${srcClass}">${card.source}</span>` +
-      card.tags.map(t => `<span class="chip">${t}</span>`).join('');
+    let chipsHtml = `<span class="chip ${srcClass}">${card.source}</span>`;
+    chipsHtml += (card.tags || []).map(t => `<span class="chip">${t}</span>`).join('');
+    if (card.audiences) {
+      chipsHtml += card.audiences.map(a => `<span class="chip chip-audience">aud:${a}</span>`).join('');
+    }
+    document.getElementById('tags').innerHTML = chipsHtml;
+
+    renderTermTooltips(card);
 
     const pct = state.initialQueueLen ? Math.round(((state.initialQueueLen - state.queue.length + 1) / state.initialQueueLen) * 100) : 0;
     document.getElementById('progressFill').style.width = Math.min(100, Math.max(0, pct)) + '%';
@@ -657,6 +907,9 @@
         <div class="prompt" id="front">—</div>
         <div class="answer" id="back"></div>
         <div class="chips" id="tags"></div>
+        <div class="tooltip-hint" id="tooltipHint"></div>
+        <div class="term-chips" id="termChips"></div>
+        <div class="term-tooltip" id="termTooltip"></div>
       </div>
       <div class="flashcard-actions" id="actions">
         <button id="showBtn" class="btn btn-primary btn-lg" style="flex: 1 1 100%;">Show answer</button>
@@ -667,6 +920,9 @@
           <button id="easyBtn"  class="btn btn-good" style="background:#D4EEDC; border-color: var(--success); color: #145635;">Easy</button>
         </div>
       </div>`;
+    el.tooltipHint = document.getElementById('tooltipHint');
+    el.termChips = document.getElementById('termChips');
+    el.termTooltip = document.getElementById('termTooltip');
     wireCardButtons();
   }
 
@@ -714,7 +970,7 @@
       p.due = plusDays(p.interval);
     }
     p.last = todayStr();
-    saveProgress();
+    saveJSON(STORAGE_KEY, state.progress);
     state.queue.splice(state.idx, 1);
     if (state.idx >= state.queue.length) state.idx = Math.max(0, state.queue.length - 1);
     showCard();
@@ -723,6 +979,7 @@
   function refreshAll() {
     rebuildCards();
     loadProgress();
+    renderProfileSelector();
     renderTagFilter();
     buildQueue();
     updateButtons();
@@ -737,11 +994,149 @@
     el.sourceFilter.value = state.source;
   }
 
+  // ===== GitHub integration =====
+  async function ghGraphQL(query, variables = {}) {
+    if (!state.gh.token) throw new Error('GitHub not authenticated.');
+    const res = await fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${state.gh.token}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/vnd.github+json'
+      },
+      body: JSON.stringify({ query, variables })
+    });
+    const j = await res.json();
+    if (!res.ok || j.errors) throw new Error(j.errors?.[0]?.message || `GitHub API error (${res.status})`);
+    return j.data;
+  }
+
+  function loadGitHubState() {
+    state.gh.cfg = loadJSON(GH_CFG_KEY, state.gh.cfg);
+    const a = loadJSON(GH_AUTH_KEY, { token: '', login: '' });
+    state.gh.token = a.token || '';
+    state.gh.login = a.login || '';
+    el.ghClientId.value = state.gh.cfg.clientId || '';
+    el.ghRepo.value = state.gh.cfg.repo || '';
+    el.ghCategoryId.value = state.gh.cfg.categoryId || '';
+    el.ghScopes.value = state.gh.cfg.scopes || 'public_repo';
+    el.ghAuthState.textContent = state.gh.token ? `Authenticated as @${state.gh.login}` : 'Not authenticated.';
+  }
+
+  function saveGitHubCfgFromForm() {
+    state.gh.cfg = {
+      clientId: el.ghClientId.value.trim(),
+      repo: el.ghRepo.value.trim(),
+      categoryId: el.ghCategoryId.value.trim(),
+      scopes: el.ghScopes.value.trim() || 'public_repo'
+    };
+    saveJSON(GH_CFG_KEY, state.gh.cfg);
+    el.ghAuthState.textContent = 'Saved GitHub configuration.';
+  }
+
+  function clearGitHubAuth() {
+    state.gh.token = ''; state.gh.login = '';
+    saveJSON(GH_AUTH_KEY, { token: '', login: '' });
+    el.ghAuthState.textContent = 'Not authenticated.';
+  }
+
+  async function startGitHubDeviceLogin() {
+    saveGitHubCfgFromForm();
+    if (!state.gh.cfg.clientId) { el.ghDeviceState.textContent = 'Client ID required.'; return; }
+    const body = new URLSearchParams({ client_id: state.gh.cfg.clientId, scope: state.gh.cfg.scopes });
+    const dcRes = await fetch('https://github.com/login/device/code', {
+      method: 'POST',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+      body
+    });
+    const dc = await dcRes.json();
+    if (!dcRes.ok || dc.error) {
+      el.ghDeviceState.textContent = `Device code error: ${dc.error_description || dc.error || dcRes.status}`;
+      return;
+    }
+    const verify = dc.verification_uri || 'https://github.com/login/device';
+    el.ghDeviceState.innerHTML = `1) Open <a target="_blank" rel="noreferrer" href="${verify}">${verify}</a> 2) Enter code <strong>${dc.user_code}</strong>. Waiting...`;
+    let interval = (dc.interval || 5) * 1000;
+    const start = Date.now();
+    while (Date.now() - start < ((dc.expires_in || 900) * 1000)) {
+      await new Promise(r => setTimeout(r, interval));
+      const tokenBody = new URLSearchParams({
+        client_id: state.gh.cfg.clientId,
+        device_code: dc.device_code,
+        grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
+      });
+      const tkRes = await fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: tokenBody
+      });
+      const tk = await tkRes.json();
+      if (tk.error === 'authorization_pending') continue;
+      if (tk.error === 'slow_down') { interval += 5000; continue; }
+      if (tk.error) { el.ghDeviceState.textContent = `Login failed: ${tk.error_description || tk.error}`; return; }
+      if (!tk.access_token) { el.ghDeviceState.textContent = 'Login failed: no access token returned.'; return; }
+      const viewer = await fetch('https://api.github.com/user', {
+        headers: { Authorization: `Bearer ${tk.access_token}`, Accept: 'application/vnd.github+json' }
+      }).then(r => r.json());
+      state.gh.token = tk.access_token;
+      state.gh.login = viewer.login || 'unknown';
+      saveJSON(GH_AUTH_KEY, { token: state.gh.token, login: state.gh.login });
+      el.ghAuthState.textContent = `Authenticated as @${state.gh.login}`;
+      el.ghDeviceState.textContent = 'GitHub login successful.';
+      return;
+    }
+    el.ghDeviceState.textContent = 'Device login timed out.';
+  }
+
+  async function loadDiscussionCategories() {
+    saveGitHubCfgFromForm();
+    if (!state.gh.cfg.repo.includes('/')) { el.ghCategoryState.textContent = 'Repository must be owner/repo.'; return; }
+    const [owner, name] = state.gh.cfg.repo.split('/');
+    const q = `query($owner:String!,$name:String!){repository(owner:$owner,name:$name){discussionCategories(first:20){nodes{id name}}}}`;
+    const d = await ghGraphQL(q, { owner, name });
+    const cats = d.repository.discussionCategories.nodes || [];
+    if (!cats.length) { el.ghCategoryState.textContent = 'No categories found.'; return; }
+    el.ghCategoryState.innerHTML = cats.map(c => `${c.name}: <code>${c.id}</code>`).join(' &middot; ');
+    if (!state.gh.cfg.categoryId) { el.ghCategoryId.value = cats[0].id; saveGitHubCfgFromForm(); }
+  }
+
+  async function createCardDiscussion() {
+    const c = currentCard();
+    if (!c) { el.ghSubmitState.textContent = 'No current card.'; return; }
+    if (!state.gh.token) { el.ghSubmitState.textContent = 'Authenticate first.'; return; }
+    saveGitHubCfgFromForm();
+    if (!state.gh.cfg.repo.includes('/')) { el.ghSubmitState.textContent = 'Repository must be owner/repo.'; return; }
+    const feedback = el.ghFeedbackBody.value.trim();
+    if (!feedback) { el.ghSubmitState.textContent = 'Feedback text required.'; return; }
+    const [owner, name] = state.gh.cfg.repo.split('/');
+    const rq = `query($owner:String!,$name:String!){repository(owner:$owner,name:$name){id discussionCategories(first:20){nodes{id}}}}`;
+    const rd = await ghGraphQL(rq, { owner, name });
+    const repositoryId = rd.repository.id;
+    const categoryId = state.gh.cfg.categoryId || rd.repository.discussionCategories.nodes?.[0]?.id;
+    if (!categoryId) { el.ghSubmitState.textContent = 'No category ID available.'; return; }
+    const title = `[card:${c.id}] ${c.front.length > 90 ? c.front.slice(0, 90) + '\u2026' : c.front}`;
+    const body = [
+      `### Flashcard feedback`, ``,
+      `- Card ID: \`${c.id}\``,
+      `- Tags: ${(c.tags || []).join(', ')}`,
+      `- Technicality: ${c.technicality || 'intermediate'}`,
+      `- Submitted by: @${state.gh.login}`,
+      ``, '### Card front', c.front,
+      '', '### Current answer', c.back,
+      '', '### Proposed update', feedback,
+      '', '_Generated from mirrord flashcards app._'
+    ].join('\n');
+    const mut = `mutation($repositoryId:ID!,$categoryId:ID!,$title:String!,$body:String!){createDiscussion(input:{repositoryId:$repositoryId,categoryId:$categoryId,title:$title,body:$body}){discussion{url number title}}}`;
+    const out = await ghGraphQL(mut, { repositoryId, categoryId, title, body });
+    const d = out.createDiscussion.discussion;
+    el.ghSubmitState.innerHTML = `Discussion created: <a target="_blank" rel="noreferrer" href="${d.url}">#${d.number} ${d.title}</a>`;
+    el.ghFeedbackBody.value = '';
+  }
+
   function addCustomCard() {
     const front = el.newFront.value.trim();
     const back = el.newBack.value.trim();
     const tags = parseTags(el.newTags.value);
-    const difficulty = Number(el.newDifficulty.value || 2);
     if (!front || !back) {
       el.addCardStatus.textContent = 'Question and answer are both required.';
       el.addCardStatus.classList.remove('ok');
@@ -751,20 +1146,28 @@
       id: `custom-${Date.now()}`,
       front, back,
       tags: tags.length ? tags : ['custom'],
-      difficulty
+      difficulty: Number(el.newDifficulty.value || 2),
+      technicality: el.newTechnicality.value || 'intermediate',
+      audiences: ['devrel'],
+      tracks: ['learning']
     };
     state.customCards.unshift(newCard);
     saveCustomCards();
     el.newFront.value = ''; el.newBack.value = ''; el.newTags.value = '';
-    el.newDifficulty.value = '2';
-    el.addCardStatus.textContent = '✓ Card added.';
+    el.newDifficulty.value = '2'; el.newTechnicality.value = 'intermediate';
+    el.addCardStatus.textContent = '\u2713 Card added.';
     el.addCardStatus.classList.add('ok');
     refreshAll();
   }
 
-  async function loadBaseCards() {
-    const res = await fetch('./cards.json');
-    state.baseCards = await res.json();
+  async function loadBase() {
+    state.baseCards = await fetch('./cards.json').then(r => r.json());
+    try {
+      state.profiles = await fetch('./profiles.json').then(r => r.json());
+    } catch (e) {
+      console.warn('profiles.json not loaded — no profiles available', e);
+      state.profiles = [];
+    }
   }
 
   // ===== Event wiring =====
@@ -775,6 +1178,16 @@
   el.shuffleBtn.addEventListener('click', () => { shuffleQueue(); showCard(); });
   el.tagFilter.addEventListener('change', (e) => { state.tag = e.target.value; savePrefs(); buildQueue(); showCard(); });
   el.sourceFilter.addEventListener('change', (e) => { state.source = e.target.value; savePrefs(); buildQueue(); showCard(); });
+  el.technicalityFilter.addEventListener('change', (e) => { state.technicality = e.target.value; savePrefs(); buildQueue(); showCard(); });
+
+  el.applyProfileBtn.addEventListener('click', () => {
+    state.activeProfile = el.profileSelect.value;
+    savePrefs(); renderProfileDescription(); buildQueue(); showCard();
+  });
+  el.clearProfileBtn.addEventListener('click', () => {
+    state.activeProfile = 'none'; el.profileSelect.value = 'none';
+    savePrefs(); renderProfileDescription(); buildQueue(); showCard();
+  });
 
   el.exportBtn.addEventListener('click', () => {
     const payload = { progress: state.progress, exportedAt: new Date().toISOString() };
@@ -798,7 +1211,7 @@
       const parsed = JSON.parse(await file.text());
       if (!parsed.progress || typeof parsed.progress !== 'object') throw new Error('invalid');
       state.progress = { ...state.progress, ...parsed.progress };
-      saveProgress(); buildQueue(); showCard();
+      saveJSON(STORAGE_KEY, state.progress); buildQueue(); showCard();
     } catch { alert('Invalid progress file.'); }
     e.target.value = '';
   });
@@ -806,16 +1219,17 @@
     const file = e.target.files?.[0]; if (!file) return;
     try {
       const parsed = JSON.parse(await file.text());
-      const cards = parsed.customCards || parsed.cards || [];
-      if (!Array.isArray(cards)) throw new Error('invalid');
-      const normalized = cards.filter(c => c && c.front && c.back).map(c => ({
+      const cards = (parsed.customCards || parsed.cards || []).filter(c => c && c.front && c.back).map(c => ({
         id: c.id || `custom-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         front: String(c.front).trim(),
         back: String(c.back).trim(),
         tags: Array.isArray(c.tags) && c.tags.length ? c.tags.map(t => String(t).toLowerCase()) : ['custom'],
-        difficulty: Number(c.difficulty || 2)
+        difficulty: Number(c.difficulty || 2),
+        technicality: c.technicality || 'intermediate',
+        audiences: Array.isArray(c.audiences) ? c.audiences : ['devrel'],
+        tracks: Array.isArray(c.tracks) ? c.tracks : ['learning']
       }));
-      state.customCards = [...normalized, ...state.customCards];
+      state.customCards = [...cards, ...state.customCards];
       saveCustomCards(); refreshAll();
     } catch { alert('Invalid custom cards file.'); }
     e.target.value = '';
@@ -830,12 +1244,28 @@
     state.customCards = []; saveCustomCards(); refreshAll();
   });
 
+  // Author panel toggle
   el.panelToggle.addEventListener('click', () => {
     const collapsed = el.panelBody.classList.toggle('collapsed');
     el.panelToggleLabel.textContent = collapsed ? 'Expand' : 'Collapse';
-    el.panelToggleIcon.textContent  = collapsed ? '+' : '−';
+    el.panelToggleIcon.textContent  = collapsed ? '+' : '\u2212';
     el.panelToggle.setAttribute('aria-expanded', String(!collapsed));
   });
+
+  // GitHub panel toggle
+  el.ghPanelToggle.addEventListener('click', () => {
+    const collapsed = el.ghPanelBody.classList.toggle('collapsed');
+    el.ghPanelToggleLabel.textContent = collapsed ? 'Expand' : 'Collapse';
+    el.ghPanelToggleIcon.textContent  = collapsed ? '+' : '\u2212';
+    el.ghPanelToggle.setAttribute('aria-expanded', String(!collapsed));
+  });
+
+  // GitHub event wiring
+  el.ghSaveConfigBtn.addEventListener('click', saveGitHubCfgFromForm);
+  el.ghStartLoginBtn.addEventListener('click', () => startGitHubDeviceLogin().catch(err => { el.ghDeviceState.textContent = `Login error: ${err.message}`; }));
+  el.ghLoadCategoriesBtn.addEventListener('click', () => loadDiscussionCategories().catch(err => { el.ghCategoryState.textContent = `Category load error: ${err.message}`; }));
+  el.ghLogoutBtn.addEventListener('click', clearGitHubAuth);
+  el.ghCreateDiscussionBtn.addEventListener('click', () => createCardDiscussion().catch(err => { el.ghSubmitState.textContent = `Submit error: ${err.message}`; }));
 
   // ===== Theme toggle =====
   const THEME_KEY = 'mirrord_flashcards_theme';
@@ -861,12 +1291,13 @@
 
   (async function init() {
     try {
-      await loadBaseCards();
+      await loadBase();
     } catch (e) {
       console.warn('cards.json not loaded — empty deck', e);
     }
     loadPrefs();
     loadCustomCards();
+    loadGitHubState();
     refreshAll();
     wireCardButtons();
   })();

@@ -1,60 +1,58 @@
 # mirrord-flashcards
 
-A lightweight, phone-friendly spaced-repetition flashcard app for learning **mirrord** deeply through use cases, operations, policies, and feature behavior.
+A phone-friendly spaced-repetition flashcard app for learning **mirrord** deeply, with simplified audience profiles and optional GitHub-authenticated feedback discussions.
 
-## What changed in this version
+## What’s new in this iteration
 
-- Much deeper and more accurate flashcards, aligned to mirrord docs topics (incoming/outgoing traffic, filters, policies, sessions, profiles, copy target, targetless, troubleshooting, and chaos-style reliability prompts).
-- Better emphasis on **what + why + step-by-step behavior** so answers are more useful for DevRel conversations.
-- Built-in authoring workflow so you can add your own cards directly in the app.
+- Profile model simplified to **two profiles only**:
+  - **Tech Beginners**
+  - **HR / Non-Technical**
+- Smart card metadata continues to drive filtering:
+  - `tags`
+  - `technicality` (`basic` / `intermediate` / `advanced`)
+  - `audiences`
+  - `tracks`
+- Added **in-card quick explainer tooltips** for protocol/fundamental terms (e.g., UDP, TCP, OCI, DNS, TLS) when they appear in a card.
 
-## Why this project
+## Core capabilities
 
-This deck is designed for developer advocates and customer-facing engineers who need to explain mirrord clearly and accurately, even when not using it every day.
+- Static app (`index.html`) with no runtime backend required for study.
+- Spaced repetition scheduling and local progress persistence.
+- Curated core deck (`cards.json`) plus custom card authoring.
+- Profile filtering via `profiles.json`.
+- Optional GitHub Device Flow login + create a Discussion tied to the current card.
 
-## Features
+## Weekly triage support
 
-- Static app (`index.html`) — trivial hosting (GitHub Pages, Netlify, Vercel static, S3, etc.)
-- Spaced repetition scheduling (SM-2 style)
-- Due queue + optional “include new cards” mode
-- Tag filtering + source filtering (core deck vs your custom cards)
-- Local-first persistence in browser `localStorage`
-- Import/export for progress and custom cards
-- In-app "Add card" editor for continuously capturing new product knowledge
+A scheduled workflow runs weekly and generates a digest of discussions that match `[card:` in the title:
+
+- `.github/workflows/weekly-discussion-digest.yml`
+- `scripts/weekly_discussion_digest.sh`
+
+It uploads a markdown artifact listing card-linked discussion threads for review.
 
 ## Quick start
-
-Open `index.html` directly, or serve locally:
 
 ```bash
 python3 -m http.server 8080
 ```
 
-Then open `http://localhost:8080`.
+Open `http://localhost:8080`.
 
 ## Files
 
-- `index.html` — app UI + scheduling + custom-card authoring
-- `cards.json` — curated core deck
-
-## Study guidance
-
-For each card, answer in this order:
-1. What feature/behavior is it?
-2. Why would a team use it (or avoid it)?
-3. How does it behave step-by-step at runtime?
-4. What policy/safety constraints matter in production?
-
-This style makes your answers stronger for demos, Q&A, and architecture conversations.
+- `index.html` — app UI + profile filtering + tooltip explainers + scheduling + GitHub feedback integration
+- `cards.json` — curated core deck with smart metadata
+- `profiles.json` — two audience profile definitions
+- `HOSTING.md` — hosting and rollout options
+- `.github/workflows/pages.yml` — deploy static app to GitHub Pages
+- `.github/workflows/weekly-discussion-digest.yml` — weekly discussion digest
+- `scripts/weekly_discussion_digest.sh` — digest generator
 
 
-## Hosting plan
+## Conflict safety check
 
-Recommended: **GitHub Pages** using the included workflow `.github/workflows/pages.yml`.
+A CI guard is included to fail fast if unresolved merge markers are committed:
 
-Why:
-- zero backend, cheapest path
-- easiest shareable URL for phone access
-- automatic deploy on push
-
-Fallback options: Netlify, Vercel static, or S3+CloudFront. See `HOSTING.md` for full rollout guidance.
+- `.github/workflows/conflict-marker-check.yml`
+- `scripts/check_conflict_markers.sh`
