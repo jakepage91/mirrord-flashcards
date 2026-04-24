@@ -1,20 +1,52 @@
 [
   {
-    "id": "tech-beginners",
-    "name": "Tech Beginners",
-    "description": "Starter-friendly profile with fundamentals, practical mirrord concepts, and gradual technical depth.",
+    "id": "devrel",
+    "name": "DevRel",
+    "description": "Full access to all cards at every technicality level. For developer advocates and technical evangelists.",
     "match": {
-      "requireAnyTags": ["foundation", "fundamentals", "devex", "kubernetes", "network", "use-case", "learning"],
-      "allowedTechnicality": ["basic", "intermediate"]
+      "requireAnyTags": [],
+      "allowedTechnicality": ["basic", "intermediate", "advanced"],
+      "includeAudiences": []
     }
   },
   {
     "id": "hr-non-technical",
     "name": "HR / Non-Technical",
-    "description": "Business-safe and plain-language concepts for non-technical stakeholders, including macro product understanding.",
+    "description": "Story-based, value-prop, and positioning cards. Plain language only.",
     "match": {
-      "requireAnyTags": ["non-technical", "foundation", "fundamentals", "sales", "leadership", "learning"],
-      "allowedTechnicality": ["basic", "intermediate"]
+      "requireAnyTags": ["non-technical", "foundation", "sales", "leadership", "positioning", "use-case", "learning"],
+      "allowedTechnicality": ["basic"]
+    }
+  },
+  {
+    "id": "core-team",
+    "name": "Core Team",
+    "description": "Everything except operator-specific cards. For core engineering.",
+    "match": {
+      "requireAnyTags": [],
+      "allowedTechnicality": ["basic", "intermediate", "advanced"],
+      "includeAudiences": [],
+      "excludeTags": ["operator"]
+    }
+  },
+  {
+    "id": "product",
+    "name": "Product",
+    "description": "Use cases, positioning, strategy, and governance. For product managers.",
+    "match": {
+      "requireAnyTags": ["product", "positioning", "use-case", "governance", "foundation", "fundamentals", "non-technical", "sales"],
+      "allowedTechnicality": ["basic", "intermediate"],
+      "includeAudiences": ["product", "product-engineering"]
+    }
+  },
+  {
+    "id": "solutions-engineering",
+    "name": "Solutions Engineering",
+    "description": "Governance, policy, production readiness, and customer-facing technical depth.",
+    "match": {
+      "requireAnyTags": ["governance", "policy", "production", "compliance", "security", "operations", "troubleshooting", "incoming", "outgoing", "foundation", "fundamentals"],
+      "allowedTechnicality": ["basic", "intermediate", "advanced"],
+      "includeAudiences": ["solutions-engineering"]
     }
   }
 ]

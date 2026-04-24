@@ -262,7 +262,7 @@
   {
     "id": "devrel-002",
     "front": "How should you answer 'Is mirrord safe?' as a trustworthy advocate?",
-    "back": "Safety depends on controls. Emphasize policy enforcement, scoped targets, filtered traffic modes, session visibility, and platform ownership\u2014not blanket yes/no claims.",
+    "back": "Safety depends on controls. Emphasize policy enforcement, scoped targets, filtered traffic modes, session visibility, and platform ownership—not blanket yes/no claims.",
     "tags": [
       "devrel",
       "security",
@@ -1230,7 +1230,7 @@
   {
     "id": "targetless-001",
     "front": "When should you use targetless mode?",
-    "back": "When you need cluster connectivity/context without impersonating a specific workload target\u2014for example running tools or checks that still benefit from cluster network context.",
+    "back": "When you need cluster connectivity/context without impersonating a specific workload target—for example running tools or checks that still benefit from cluster network context.",
     "tags": [
       "targetless",
       "use-case"
@@ -1311,6 +1311,627 @@
     "technicality": "advanced",
     "tracks": [
       "network"
+    ]
+  },
+  {
+    "id": "k8s-001",
+    "front": "What is a Kubernetes Service and why does it matter for mirrord?",
+    "back": "A Service is a stable network endpoint that routes traffic to a dynamic set of pods via label selectors. It provides DNS-based discovery (e.g. my-svc.namespace.svc.cluster.local) and load balancing. mirrord uses Service targets to intercept traffic reaching those endpoints, so understanding Services is essential for configuring incoming interception correctly.",
+    "tags": [
+      "foundation",
+      "kubernetes",
+      "network",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "product",
+      "sales"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "fundamentals",
+      "network"
+    ]
+  },
+  {
+    "id": "k8s-002",
+    "front": "What is a Deployment in Kubernetes and how does it relate to pods?",
+    "back": "A Deployment declares a desired state for a set of identical pods (replicas). It manages a ReplicaSet that ensures the right number of pods are running and handles rolling updates and rollbacks. When you target a Deployment with mirrord, the system selects one of its pods as the context for your local session.",
+    "tags": [
+      "foundation",
+      "kubernetes",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "product",
+      "sales"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "k8s-003",
+    "front": "What are Kubernetes Namespaces and why do they matter for governance?",
+    "back": "Namespaces partition a cluster into logical groups for isolation, resource quotas, and access control. Teams often use separate namespaces for staging, production, and per-team environments. mirrord policies (MirrordPolicy) are namespace-scoped, so namespace boundaries directly control which targets developers can access.",
+    "tags": [
+      "foundation",
+      "kubernetes",
+      "governance",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "product",
+      "sales"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "fundamentals",
+      "policy"
+    ]
+  },
+  {
+    "id": "k8s-004",
+    "front": "What is RBAC in Kubernetes and why is it relevant to mirrord?",
+    "back": "RBAC (Role-Based Access Control) defines who can do what in a cluster via Roles, ClusterRoles, and Bindings. mirrord's operator requires specific RBAC permissions to create agent pods and manage sessions. Platform teams use RBAC alongside MirrordPolicy to control which developers can use mirrord against which targets.",
+    "tags": [
+      "kubernetes",
+      "security",
+      "governance"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals",
+      "policy"
+    ]
+  },
+  {
+    "id": "k8s-005",
+    "front": "What is Ingress in Kubernetes?",
+    "back": "Ingress is a Kubernetes resource that manages external HTTP/HTTPS access to Services, providing host/path-based routing, TLS termination, and load balancing. It sits at the cluster edge. When mirrord intercepts traffic, it operates at the pod/Service level inside the cluster, downstream of the Ingress controller.",
+    "tags": [
+      "kubernetes",
+      "network"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals",
+      "network"
+    ]
+  },
+  {
+    "id": "k8s-006",
+    "front": "What are ConfigMaps and Secrets in Kubernetes?",
+    "back": "ConfigMaps store non-sensitive configuration (feature flags, URLs, settings) and Secrets store sensitive data (passwords, tokens, certificates). Both can be mounted as files or injected as environment variables into pods. mirrord's env feature imports these values from the target pod, letting your local process use the same configuration as the remote workload.",
+    "tags": [
+      "kubernetes",
+      "config"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "k8s-007",
+    "front": "Why does RBAC matter specifically for the mirrord operator?",
+    "back": "The mirrord operator needs permissions to create ephemeral agent pods, watch target workloads, and manage session state. Without proper RBAC, the operator cannot function. Platform teams must grant ServiceAccount permissions carefully — too broad risks privilege escalation, too narrow breaks sessions. This is separate from MirrordPolicy, which controls user-level access.",
+    "tags": [
+      "kubernetes",
+      "security",
+      "operator",
+      "governance"
+    ],
+    "difficulty": 3,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "policy",
+      "operations"
+    ]
+  },
+  {
+    "id": "k8s-008",
+    "front": "How do Kubernetes namespaces affect mirrord policy scope?",
+    "back": "MirrordPolicy is namespace-scoped — it only applies to targets within its namespace. MirrordClusterPolicy applies cluster-wide. This means you can have permissive policies in dev namespaces and restrictive policies in production. A common pattern: allow steal in staging namespace, restrict to mirror-only in production namespace.",
+    "tags": [
+      "kubernetes",
+      "policy",
+      "governance"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "policy"
+    ]
+  },
+  {
+    "id": "container-001",
+    "front": "What are container image layers and why do they matter?",
+    "back": "A container image is built from stacked read-only layers. Each layer represents a filesystem change (install a package, copy files). Layers are cached and shared between images, making builds and pulls faster. Understanding layers helps explain why mirrord avoids the build-push-deploy cycle — it lets you skip rebuilding the image entirely by running locally with remote context.",
+    "tags": [
+      "foundation",
+      "container",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "product",
+      "sales"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "container-002",
+    "front": "What is a container registry?",
+    "back": "A registry is a server that stores and distributes container images (e.g. Docker Hub, ECR, GCR, ACR). Developers push images after building and clusters pull them when creating pods. The push-pull cycle adds latency to every code change. mirrord eliminates this step during development by running your code locally while borrowing remote context.",
+    "tags": [
+      "foundation",
+      "container",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "product",
+      "sales"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "container-003",
+    "front": "What is a security context in Kubernetes and how does it relate to mirrord?",
+    "back": "A security context defines privilege and access settings for a pod or container: run-as user, read-only filesystem, Linux capabilities, seccomp profiles. mirrord's agent pod may need specific security context settings (e.g. NET_ADMIN capability for traffic redirection). Copy-target inherits the original pod's security context by default.",
+    "tags": [
+      "container",
+      "security",
+      "kubernetes"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "fundamentals",
+      "operations"
+    ]
+  },
+  {
+    "id": "lb-001",
+    "front": "What is load balancing in simple terms?",
+    "back": "Load balancing distributes incoming requests across multiple servers (or pods) so no single instance is overwhelmed. It improves availability and performance. In Kubernetes, Services provide built-in load balancing across pod replicas using round-robin or random selection by default.",
+    "tags": [
+      "foundation",
+      "network",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "product",
+      "sales",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "fundamentals",
+      "network"
+    ]
+  },
+  {
+    "id": "lb-002",
+    "front": "How does Kubernetes Service load balancing work under the hood?",
+    "back": "kube-proxy programs iptables or IPVS rules on each node to distribute traffic to healthy pod endpoints. When a pod is added or removed, endpoint lists are updated and rules are reprogrammed. This is L4 (transport-level) load balancing. L7 (application-level) load balancing requires an Ingress controller or service mesh.",
+    "tags": [
+      "kubernetes",
+      "network",
+      "deep-dive"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "network"
+    ]
+  },
+  {
+    "id": "lb-003",
+    "front": "How does load balancing interact with mirrord steal mode?",
+    "back": "In steal mode, mirrord redirects traffic at the target pod level, not at the Service level. Other pods in the same Service still receive their share of traffic normally. Only the targeted pod's traffic is stolen to your local process. This means steal mode affects one pod's traffic slice, not the entire Service's traffic.",
+    "tags": [
+      "incoming",
+      "network",
+      "architecture"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "incoming",
+      "network"
+    ]
+  },
+  {
+    "id": "biz-001",
+    "front": "What is mirrord's ROI pitch in one sentence?",
+    "back": "mirrord eliminates the build-push-deploy cycle during development, saving each developer 30-60 minutes per debug iteration by letting them test locally against real cloud context — multiply that by team size and iterations per day for the business case.",
+    "tags": [
+      "sales",
+      "non-technical",
+      "positioning",
+      "use-case"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "devrel"
+    ]
+  },
+  {
+    "id": "biz-002",
+    "front": "What are the top 3 use cases for mirrord?",
+    "back": "1) Debugging microservices locally against staging — test with real dependencies without deploying. 2) Reproducing production issues safely — mirror live traffic to your laptop to diagnose bugs. 3) Onboarding new developers — new hires can run and debug services from day one without understanding the full deploy pipeline.",
+    "tags": [
+      "use-case",
+      "non-technical",
+      "sales",
+      "positioning"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "devrel",
+      "fundamentals"
+    ]
+  },
+  {
+    "id": "biz-003",
+    "front": "How should you position mirrord vs. Telepresence?",
+    "back": "mirrord is lighter weight (no daemon, no cluster-side installation for OSS), works at the process level rather than the machine level, and has a simpler mental model. Telepresence replaces your local networking stack; mirrord injects into a single process. For teams that want minimal cluster changes and per-process isolation, mirrord is the simpler path.",
+    "tags": [
+      "positioning",
+      "sales",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "devrel"
+    ]
+  },
+  {
+    "id": "biz-004",
+    "front": "Customer objection: 'Is mirrord safe for production?'",
+    "back": "Answer honestly: safety depends on controls, not the tool itself. With the mirrord operator, teams enforce policies (target allowlists, traffic mode restrictions, session auditing). Mirror mode is read-only observation. Filtered steal limits blast radius. Production access should require time-bounded approvals and audit trails. Never claim unconditional safety — describe the control framework.",
+    "tags": [
+      "sales",
+      "non-technical",
+      "security",
+      "positioning"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "sales-leadership",
+      "solutions-engineering"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "devrel"
+    ]
+  },
+  {
+    "id": "biz-005",
+    "front": "Customer objection: 'We already have staging environments'",
+    "back": "Staging environments are shared and slow: you wait for deploys, compete for shared resources, and fight environment drift. mirrord lets each developer work against staging context simultaneously from their own laptop without deploying. It complements staging, not replaces it — staging is the target environment, mirrord is how you use it efficiently.",
+    "tags": [
+      "sales",
+      "non-technical",
+      "positioning",
+      "use-case"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "devrel"
+    ]
+  },
+  {
+    "id": "biz-006",
+    "front": "What is mirrord's enterprise governance story?",
+    "back": "The mirrord operator provides: 1) Policy enforcement — restrict targets, traffic modes, and reachable endpoints per namespace or cluster-wide. 2) Session auditing — track who accessed what, when, and for how long. 3) RBAC integration — leverage existing Kubernetes access controls. 4) Copy-target isolation — test without affecting live workloads. This gives platform teams control while developers get speed.",
+    "tags": [
+      "governance",
+      "sales",
+      "compliance",
+      "non-technical"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "sales-leadership",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "policy",
+      "devrel"
+    ]
+  },
+  {
+    "id": "biz-007",
+    "front": "How do you quantify developer time savings with mirrord?",
+    "back": "Measure: 1) Time per inner-loop iteration before mirrord (build + push + deploy + test: typically 5-15 min). 2) Time with mirrord (save + test: typically 5-30 sec). 3) Multiply delta by iterations per day (5-20) and team size. A 10-person team doing 10 iterations/day saving 10 min each = 16+ hours saved daily. Track deployment frequency and mean time to debug as secondary metrics.",
+    "tags": [
+      "sales",
+      "non-technical",
+      "use-case"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "devrel"
+    ]
+  },
+  {
+    "id": "biz-008",
+    "front": "When should you NOT recommend mirrord?",
+    "back": "Be honest about limitations: 1) Purely frontend apps with no backend dependencies — local dev is already fast. 2) Teams with no Kubernetes — mirrord needs a K8s cluster. 3) Extremely latency-sensitive real-time systems where remote network hops matter. 4) When the team lacks basic K8s knowledge to understand what mirrord is connecting to. Credibility comes from knowing when not to sell.",
+    "tags": [
+      "positioning",
+      "sales",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "sales-leadership"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "devrel"
+    ]
+  },
+  {
+    "id": "net-001",
+    "front": "What are network ports and why do they matter for mirrord?",
+    "back": "A port is a numbered endpoint (0-65535) that identifies a specific process or service on a machine. Well-known ports: 80 (HTTP), 443 (HTTPS), 5432 (PostgreSQL). In mirrord, you configure which ports to intercept (incoming.ports), ignore (incoming.ignore_ports), or remap (incoming.listen_ports). Understanding ports is essential for targeting the right traffic.",
+    "tags": [
+      "foundation",
+      "network",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering",
+      "product",
+      "sales"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "fundamentals",
+      "network"
+    ]
+  },
+  {
+    "id": "net-002",
+    "front": "What is an IP address in simple terms?",
+    "back": "An IP address is a unique number assigned to every device on a network, like a mailing address for computers. IPv4 uses 4 numbers (192.168.1.1), IPv6 uses longer hex notation. In Kubernetes, each pod gets its own IP. mirrord uses these addresses when routing traffic between your local machine and the target pod's network context.",
+    "tags": [
+      "foundation",
+      "network",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "product",
+      "sales"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "fundamentals",
+      "network"
+    ]
+  },
+  {
+    "id": "net-003",
+    "front": "What is a proxy and how does the concept relate to mirrord?",
+    "back": "A proxy is an intermediary that forwards requests between a client and server. Forward proxies act on behalf of clients; reverse proxies act on behalf of servers. mirrord acts similarly to a selective reverse proxy at the pod level — it intercepts specific traffic flows and routes them to your local process while the rest continues to the remote target normally.",
+    "tags": [
+      "foundation",
+      "network"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "fundamentals",
+      "network"
+    ]
+  },
+  {
+    "id": "net-004",
+    "front": "What is CIDR notation and where does it appear in mirrord config?",
+    "back": "CIDR (Classless Inter-Domain Routing) notation defines IP ranges: 10.0.0.0/8 means 'all IPs starting with 10'. The number after the slash is the prefix length — smaller numbers mean larger ranges. In mirrord, outgoing policies can restrict which CIDRs sessions are allowed to reach, preventing local sessions from accessing unauthorized network ranges via the cluster.",
+    "tags": [
+      "network",
+      "policy",
+      "config"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "core-rust",
+      "devrel",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "network",
+      "policy"
+    ]
+  },
+  {
+    "id": "devrel-004",
+    "front": "How do you handle 'mirrord broke my staging' from a developer?",
+    "back": "First: clarify what happened (did steal mode redirect real traffic? did outgoing calls cause side effects?). Second: check session state with 'mirrord operator status'. Third: verify their mirrord config (were ports scoped? were filters set?). Fourth: explain the cause honestly. Fifth: recommend safer defaults (mirror mode, filtered steal, copy-target). Never dismiss the concern — use it to improve team defaults.",
+    "tags": [
+      "devrel",
+      "troubleshooting",
+      "workflow"
+    ],
+    "difficulty": 2,
+    "audiences": [
+      "devrel",
+      "product-engineering",
+      "solutions-engineering"
+    ],
+    "technicality": "intermediate",
+    "tracks": [
+      "devrel",
+      "troubleshooting"
+    ]
+  },
+  {
+    "id": "devrel-005",
+    "front": "What does a mirrord adoption playbook look like for a new team?",
+    "back": "1) Start with one service in staging — pick something low-risk with clear traffic patterns. 2) Use mirror mode first — observe before intercepting. 3) Set up MirrordPolicy early — establish guardrails before habits form. 4) Run a team demo — show the 'before/after' inner loop improvement. 5) Measure time savings for the first week. 6) Expand to more services and introduce filtered steal once comfort builds. 7) Document team-specific config defaults.",
+    "tags": [
+      "devrel",
+      "workflow",
+      "use-case",
+      "non-technical"
+    ],
+    "difficulty": 1,
+    "audiences": [
+      "devrel",
+      "product",
+      "sales",
+      "solutions-engineering"
+    ],
+    "technicality": "basic",
+    "tracks": [
+      "devrel",
+      "fundamentals"
     ]
   }
 ]

@@ -42,25 +42,68 @@
       var(--paper-50);
   }
 
-  .container { max-width: 880px; margin: 0 auto; padding: var(--s-6) var(--s-5) var(--s-8); }
+  .container { max-width: 880px; margin: 0 auto; padding: 0 var(--s-5) var(--s-8); }
 
-  /* ========= Header ========= */
-  .header {
-    display: flex; align-items: center; justify-content: space-between; gap: var(--s-4);
-    margin-bottom: var(--s-6); flex-wrap: wrap;
+  /* ========= Top Bar (sticky) ========= */
+  .top-bar {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+    height: 56px;
+    padding: 0 var(--s-5);
+    background: var(--paper-0);
+    border-bottom: var(--border-soft);
+    box-shadow: var(--shadow-sm);
+    flex-wrap: nowrap;
   }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-mark { width: 44px; height: auto; flex-shrink: 0; display: block; }
+  .top-bar-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .top-bar-right { display: flex; align-items: center; gap: var(--s-2); flex-wrap: wrap; justify-content: flex-end; }
+
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark { width: 32px; height: auto; flex-shrink: 0; display: block; }
   .brand-name {
     font-family: var(--font-display);
-    font-weight: 600; font-size: 1.1rem; color: var(--ink-900); letter-spacing: -0.01em;
+    font-weight: 600; font-size: 0.95rem; color: var(--ink-900); letter-spacing: -0.01em;
+    white-space: nowrap;
   }
   .brand-name em { font-style: normal; color: var(--iris-600); font-weight: 600; }
-  .brand-sub {
-    font-family: var(--font-mono); font-size: 10px; color: var(--ink-500);
-    letter-spacing: var(--tr-wide); text-transform: uppercase;
+
+  .profile-select-wrap { position: relative; }
+  .profile-select-wrap select {
+    font-size: var(--fs-xs); padding: 5px 8px; border-radius: var(--r-md);
+    max-width: 180px;
   }
-  .header-actions { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+
+  /* ========= Streak Badge ========= */
+  .streak-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+    padding: 4px 10px; border-radius: var(--r-pill);
+    background: var(--amber-100); color: var(--amber-600);
+    border: 1px solid #F1D59A;
+    cursor: pointer; position: relative;
+    user-select: none;
+  }
+  .streak-tooltip {
+    display: none;
+    position: absolute; top: calc(100% + 8px); right: 0;
+    background: var(--paper-0); border: var(--border-soft);
+    border-radius: var(--r-md); box-shadow: var(--shadow-md);
+    padding: var(--s-3) var(--s-4);
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-700);
+    white-space: nowrap; z-index: 200;
+    animation: fadein var(--dur-base) var(--ease-out);
+  }
+  .streak-tooltip.visible { display: block; }
+
+  .gear-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--paper-0); border: 1px solid var(--paper-300);
+    cursor: pointer; color: var(--ink-700);
+    transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast);
+  }
+  .gear-btn:hover { border-color: var(--iris-500); color: var(--iris-500); }
+  .gear-btn svg { width: 16px; height: 16px; }
 
   /* ========= Buttons ========= */
   .btn {
@@ -199,13 +242,22 @@
 
   .flashcard-actions {
     padding: var(--s-5) var(--s-6) var(--s-6);
-    display: flex; gap: var(--s-2); flex-wrap: wrap;
+    display: flex; gap: var(--s-2); flex-wrap: wrap; align-items: center;
     border-top: var(--border-soft);
     background: var(--paper-50);
   }
   .flashcard-actions .btn { flex: 1 1 auto; min-width: 0; }
   .grade-row { display: flex; gap: var(--s-2); width: 100%; }
   .grade-row .btn { flex: 1 1 0; }
+
+  .discuss-link {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink-500); cursor: pointer; background: none; border: none;
+    text-decoration: underline; text-underline-offset: 2px;
+    padding: 4px 0; flex: 0 0 auto; white-space: nowrap;
+    transition: color var(--dur-fast);
+  }
+  .discuss-link:hover { color: var(--iris-500); }
 
   /* ========= Filters row ========= */
   .filters {
@@ -238,50 +290,45 @@
   }
   .status-pill b { color: var(--ink-900); font-weight: 600; }
 
-  /* ========= Profile panel ========= */
-  .profile-panel {
-    margin-top: var(--s-4);
-    background: var(--paper-0);
-    border: var(--border-soft);
-    border-radius: var(--r-lg);
-    box-shadow: var(--shadow-xs);
-    padding: var(--s-4);
+  /* ========= Settings slide-out panel ========= */
+  .settings-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35); z-index: 500;
+    animation: fadein var(--dur-base) var(--ease-out);
   }
-  .profile-panel .panel-title { font-size: 0.9375rem; margin-bottom: var(--s-3); }
-  .profile-row {
-    display: flex; gap: var(--s-3); flex-wrap: wrap; align-items: center;
-  }
-  .profile-desc {
-    font-size: var(--fs-sm); color: var(--ink-500); margin-top: var(--s-2);
-  }
-  .profile-coverage {
-    font-family: var(--font-mono); font-size: 11px; color: var(--ink-500);
-    margin-top: var(--s-2); letter-spacing: 0.02em;
-  }
+  .settings-backdrop.visible { display: block; }
 
-  /* ========= Author panel ========= */
-  .panel {
-    margin-top: var(--s-6);
+  .settings-panel {
+    position: fixed; top: 0; right: -400px; bottom: 0;
+    width: 380px; z-index: 510;
     background: var(--paper-0);
-    border: var(--border-soft);
-    border-radius: var(--r-xl);
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
+    border-left: var(--border-soft);
+    box-shadow: var(--shadow-lg, -4px 0 24px rgba(0,0,0,0.12));
+    overflow-y: auto;
+    transition: right 0.25s var(--ease-out);
+    padding: var(--s-5);
   }
-  .panel-head {
-    padding: var(--s-5) var(--s-5) 0;
-    display: flex; justify-content: space-between; align-items: flex-start; gap: var(--s-3);
-    flex-wrap: wrap;
+  .settings-panel.visible { right: 0; }
+
+  .settings-panel .panel-title { font-size: 1rem; margin-bottom: var(--s-4); }
+  .settings-close {
+    position: absolute; top: var(--s-4); right: var(--s-4);
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--paper-100); border: var(--border-soft);
+    cursor: pointer; color: var(--ink-700); font-size: 18px; line-height: 1;
   }
-  .panel-sub { font-size: var(--fs-sm); color: var(--ink-500); margin-top: 4px; max-width: 48ch; }
-  .panel-toggle {
-    font-family: var(--font-mono); font-size: 11px; letter-spacing: var(--tr-wide);
-    text-transform: uppercase; color: var(--ink-500); background: none; border: 0; cursor: pointer;
-    display: flex; align-items: center; gap: 6px;
+  .settings-close:hover { background: var(--paper-200); }
+
+  .settings-section {
+    margin-bottom: var(--s-5); padding-bottom: var(--s-5);
+    border-bottom: 1px dashed var(--paper-200);
   }
-  .panel-toggle:hover { color: var(--ink-900); }
-  .panel-body { padding: var(--s-5); border-top: var(--border-soft); margin-top: var(--s-4); }
-  .panel-body.collapsed { display: none; }
+  .settings-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .settings-section .section-title {
+    font-family: var(--font-display); font-size: 0.9375rem; font-weight: 600;
+    color: var(--ink-900); margin-bottom: var(--s-3);
+  }
 
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
   .field-label {
@@ -315,8 +362,8 @@
     letter-spacing: var(--tr-wide); color: var(--ink-500);
   }
 
-  /* ========= GitHub feedback panel ========= */
-  .gh-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); margin-top: var(--s-3); }
+  /* ========= GitHub config (inside settings) ========= */
+  .gh-grid { display: grid; grid-template-columns: 1fr; gap: var(--s-3); margin-top: var(--s-3); }
   .gh-grid input {
     font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--ink-800);
     padding: 7px 12px; border-radius: var(--r-md);
@@ -328,9 +375,35 @@
     margin-top: var(--s-2); min-height: 14px;
   }
   .gh-status a { color: var(--iris-500); }
-  .gh-divider {
-    border: none; border-top: 1px dashed var(--paper-200); margin: var(--s-4) 0;
+
+  /* ========= Discussion Modal ========= */
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45); z-index: 600;
+    animation: fadein var(--dur-base) var(--ease-out);
   }
+  .modal-backdrop.visible { display: flex; align-items: center; justify-content: center; }
+
+  .discuss-modal {
+    background: var(--paper-0);
+    border: var(--border-soft);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-md);
+    width: 100%; max-width: 520px;
+    padding: var(--s-6);
+    position: relative;
+    animation: fadein var(--dur-base) var(--ease-out);
+  }
+  .discuss-modal .panel-title { margin-bottom: var(--s-4); }
+  .discuss-modal .modal-close {
+    position: absolute; top: var(--s-4); right: var(--s-4);
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--paper-100); border: var(--border-soft);
+    cursor: pointer; color: var(--ink-700); font-size: 18px; line-height: 1;
+  }
+  .discuss-modal .modal-close:hover { background: var(--paper-200); }
+  .discuss-modal textarea { min-height: 80px; margin-top: var(--s-3); }
 
   /* ========= Empty / complete state ========= */
   .empty { text-align: center; padding: var(--s-7) var(--s-5); }
@@ -348,8 +421,7 @@
 
   /* ========= Footer ========= */
   .footer {
-    margin-top: var(--s-7); padding-top: var(--s-4);
-    border-top: var(--border-soft);
+    margin-top: var(--s-5); padding: var(--s-3) 0;
     text-align: center;
     font-family: var(--font-mono); font-size: 11px; color: var(--ink-500);
     letter-spacing: 0.02em;
@@ -357,74 +429,62 @@
   .footer em { font-style: italic; color: var(--ink-700); }
 
   @media (max-width: 680px) {
-    .container { padding: var(--s-4); }
+    .container { padding: 0 var(--s-3) var(--s-6); }
+    .top-bar { padding: 0 var(--s-3); gap: var(--s-2); height: auto; min-height: 56px; flex-wrap: wrap; padding-top: var(--s-2); padding-bottom: var(--s-2); }
+    .brand-name { font-size: 0.85rem; }
     .prompt { font-size: 1.2rem; }
-    .grid, .gh-grid { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
     .grade-row { flex-wrap: wrap; }
     .grade-row .btn { flex: 1 1 calc(50% - 4px); }
     .status-pill { margin-left: 0; }
     .flashcard-body, .flashcard-actions, .flashcard-head { padding-left: var(--s-4); padding-right: var(--s-4); }
+    .settings-panel { width: 100%; right: -100%; }
+    .settings-panel.visible { right: 0; }
+    .discuss-modal { max-width: calc(100% - var(--s-6)); margin: var(--s-3); }
   }
 </style>
 </head>
 <body>
 
-<div class="container">
-
-  <!-- ===== Header ===== -->
-  <header class="header">
+<!-- ===== Top Bar ===== -->
+<div class="top-bar">
+  <div class="top-bar-left">
     <div class="brand">
       <img class="brand-mark" src="logo.png" alt="mirrord mirror mascot" />
-      <div>
-        <div class="brand-name"><em>mirrord</em> flashcards</div>
-        <div class="brand-sub">profiles · spaced repetition · feedback</div>
-      </div>
+      <div class="brand-name"><em>mirrord</em> flashcards</div>
     </div>
-    <div class="header-actions">
-      <button id="newModeBtn" class="btn btn-secondary btn-sm">Include new</button>
-      <button id="shuffleBtn" class="btn btn-ghost btn-sm">Shuffle</button>
-      <button id="exportBtn" class="btn btn-ghost btn-sm">Export progress</button>
-      <button id="exportDeckBtn" class="btn btn-ghost btn-sm">Export custom</button>
-      <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle light / dark">
-        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-      </button>
-    </div>
-  </header>
-
-  <!-- ===== Learning Profile ===== -->
-  <div class="profile-panel">
-    <div class="panel-title">Learning profile</div>
-    <div class="profile-row">
-      <div class="filter-group">
-        <label for="profileSelect">Profile</label>
-        <select id="profileSelect"></select>
-      </div>
-      <button id="applyProfileBtn" class="btn btn-primary btn-sm">Apply</button>
-      <button id="clearProfileBtn" class="btn btn-ghost btn-sm">Clear</button>
-      <div class="filter-group">
-        <label for="technicalityFilter">Technicality</label>
-        <select id="technicalityFilter">
-          <option value="all">all</option>
-          <option value="basic">basic</option>
-          <option value="intermediate">intermediate</option>
-          <option value="advanced">advanced</option>
-        </select>
-      </div>
-    </div>
-    <div class="profile-desc" id="profileDescription"></div>
-    <div class="profile-coverage" id="profileCoverage"></div>
   </div>
+  <div class="top-bar-right">
+    <div class="profile-select-wrap">
+      <select id="profileSelect" title="Learning profile"></select>
+    </div>
+    <div class="streak-badge" id="streakBadge" title="Study streak">
+      <span>&#128293;</span><span id="streakCount">0</span>
+      <div class="streak-tooltip" id="streakTooltip"></div>
+    </div>
+    <button id="newModeBtn" class="btn btn-secondary btn-sm">Include new</button>
+    <button id="shuffleBtn" class="btn btn-ghost btn-sm">Shuffle</button>
+    <button class="gear-btn" id="settingsToggle" aria-label="Settings" title="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme" title="Toggle light / dark">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="container">
 
   <!-- ===== Flashcard ===== -->
-  <section class="flashcard" id="cardWrap" style="margin-top: var(--s-4);">
+  <section class="flashcard" id="cardWrap" style="margin-top: var(--s-5);">
     <div class="flashcard-head">
-      <div class="meta" id="meta">loading…</div>
+      <div class="meta" id="meta">loading...</div>
       <div class="progress-track" title="queue progress"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
     </div>
     <div class="flashcard-body">
       <div class="eyebrow" id="eyebrow">Question</div>
-      <div class="prompt" id="front">—</div>
+      <div class="prompt" id="front">&mdash;</div>
       <div class="answer" id="back"></div>
       <div class="chips" id="tags"></div>
       <div class="tooltip-hint" id="tooltipHint"></div>
@@ -439,6 +499,7 @@
         <button id="goodBtn"  class="btn btn-good">Good</button>
         <button id="easyBtn"  class="btn btn-good" style="background:#D4EEDC; border-color: var(--success); color: #145635;">Easy</button>
       </div>
+      <button class="discuss-link" id="discussLink">Discuss this card</button>
     </div>
   </section>
 
@@ -456,129 +517,152 @@
         <option value="custom">custom</option>
       </select>
     </div>
-    <div class="status-pill" id="status">—</div>
+    <div class="status-pill" id="status">&mdash;</div>
   </div>
 
-  <!-- ===== GitHub feedback panel ===== -->
-  <section class="panel" style="margin-top: var(--s-4);">
-    <div class="panel-head">
+  <footer class="footer">
+    Built with <em>cloudforge</em> design system &middot; answer in the order: what &rarr; why &rarr; step-by-step &rarr; safety.
+  </footer>
+</div>
+
+<!-- ===== Settings Backdrop ===== -->
+<div class="settings-backdrop" id="settingsBackdrop"></div>
+
+<!-- ===== Settings Slide-out Panel ===== -->
+<div class="settings-panel" id="settingsPanel">
+  <button class="settings-close" id="settingsClose" aria-label="Close settings">&times;</button>
+  <div class="panel-title" style="margin-top: var(--s-2);">Settings</div>
+
+  <!-- Add flashcard -->
+  <div class="settings-section">
+    <div class="section-title">Add a flashcard</div>
+    <div class="grid">
       <div>
-        <div class="panel-title">GitHub feedback</div>
-        <div class="panel-sub">Authenticate with Device Flow and open a card-linked Discussion.</div>
+        <label for="newFront" class="field-label">Question</label>
+        <textarea id="newFront" placeholder="Example: Why use filtered steal instead of full steal in shared staging?"></textarea>
       </div>
-      <button class="panel-toggle" id="ghPanelToggle" aria-expanded="false">
-        <span id="ghPanelToggleLabel">Expand</span>
-        <span id="ghPanelToggleIcon">+</span>
-      </button>
+      <div>
+        <label for="newBack" class="field-label">Answer</label>
+        <textarea id="newBack" placeholder="Explain what + why + step-by-step behavior + safety tradeoff."></textarea>
+      </div>
     </div>
-    <div class="panel-body collapsed" id="ghPanelBody">
-      <div class="gh-grid">
-        <div>
-          <label for="ghClientId" class="field-label">OAuth client ID</label>
-          <input id="ghClientId" type="text" placeholder="Iv1..." />
-        </div>
-        <div>
-          <label for="ghRepo" class="field-label">Repository</label>
-          <input id="ghRepo" type="text" placeholder="owner/repo" />
-        </div>
+    <div class="author-row">
+      <input id="newTags" type="text" placeholder="tags, comma separated" />
+      <select id="newDifficulty">
+        <option value="1">difficulty 1</option>
+        <option value="2" selected>difficulty 2</option>
+        <option value="3">difficulty 3</option>
+        <option value="4">difficulty 4</option>
+        <option value="5">difficulty 5</option>
+      </select>
+      <select id="newTechnicality">
+        <option value="basic">basic</option>
+        <option value="intermediate" selected>intermediate</option>
+        <option value="advanced">advanced</option>
+      </select>
+      <button id="addCardBtn" class="btn btn-primary btn-sm">Add card</button>
+    </div>
+    <div class="add-status" id="addCardStatus"></div>
+  </div>
+
+  <!-- Import / Export -->
+  <div class="settings-section">
+    <div class="section-title">Import / Export</div>
+    <div class="io-row" style="margin-top:0; padding-top:0; border-top:none;">
+      <button id="exportBtn" class="btn btn-secondary btn-sm">Export progress</button>
+      <button id="exportDeckBtn" class="btn btn-secondary btn-sm">Export custom</button>
+    </div>
+    <div class="io-row">
+      <label for="importProgressInput">Import progress</label>
+      <input id="importProgressInput" type="file" accept="application/json" />
+    </div>
+    <div class="io-row">
+      <label for="importDeckInput">Import custom deck</label>
+      <input id="importDeckInput" type="file" accept="application/json" />
+    </div>
+  </div>
+
+  <!-- Danger zone -->
+  <div class="settings-section">
+    <div class="section-title">Danger zone</div>
+    <div class="author-row" style="margin-top: 0;">
+      <button id="resetBtn" class="btn btn-again btn-sm">Reset progress</button>
+      <button id="clearCustomBtn" class="btn btn-again btn-sm">Delete custom cards</button>
+    </div>
+  </div>
+
+  <!-- GitHub config -->
+  <div class="settings-section">
+    <div class="section-title">GitHub integration</div>
+    <div class="gh-grid">
+      <div>
+        <label for="ghClientId" class="field-label">OAuth client ID</label>
+        <input id="ghClientId" type="text" placeholder="Iv1..." />
       </div>
-      <div class="gh-grid">
-        <div>
-          <label for="ghCategoryId" class="field-label">Discussion category ID</label>
-          <input id="ghCategoryId" type="text" />
-        </div>
-        <div>
-          <label for="ghScopes" class="field-label">Scopes</label>
-          <input id="ghScopes" type="text" value="public_repo" />
-        </div>
+      <div>
+        <label for="ghRepo" class="field-label">Repository</label>
+        <input id="ghRepo" type="text" placeholder="owner/repo" />
       </div>
-      <div class="author-row">
-        <button id="ghSaveConfigBtn" class="btn btn-secondary btn-sm">Save config</button>
-        <button id="ghStartLoginBtn" class="btn btn-primary btn-sm">Login with GitHub</button>
-        <button id="ghLoadCategoriesBtn" class="btn btn-ghost btn-sm">Load categories</button>
-        <button id="ghLogoutBtn" class="btn btn-again btn-sm">Logout</button>
+      <div>
+        <label for="ghCategoryId" class="field-label">Discussion category ID</label>
+        <input id="ghCategoryId" type="text" />
       </div>
-      <div class="gh-status" id="ghAuthState"></div>
-      <div class="gh-status" id="ghDeviceState"></div>
-      <div class="gh-status" id="ghCategoryState"></div>
-      <hr class="gh-divider">
+      <div>
+        <label for="ghScopes" class="field-label">Scopes</label>
+        <input id="ghScopes" type="text" value="public_repo" />
+      </div>
+    </div>
+    <div class="author-row">
+      <button id="ghSaveConfigBtn" class="btn btn-secondary btn-sm">Save config</button>
+      <button id="ghStartLoginBtn" class="btn btn-primary btn-sm">Login with GitHub</button>
+      <button id="ghLoadCategoriesBtn" class="btn btn-ghost btn-sm">Load categories</button>
+      <button id="ghLogoutBtn" class="btn btn-again btn-sm">Logout</button>
+    </div>
+    <div class="gh-status" id="ghAuthState"></div>
+    <div class="gh-status" id="ghDeviceState"></div>
+    <div class="gh-status" id="ghCategoryState"></div>
+  </div>
+</div>
+
+<!-- ===== Discussion Modal Backdrop ===== -->
+<div class="modal-backdrop" id="discussBackdrop">
+  <div class="discuss-modal" id="discussModal">
+    <button class="modal-close" id="discussClose" aria-label="Close">&times;</button>
+    <div class="panel-title">Discuss this card</div>
+    <!-- Unauth state -->
+    <div id="discussUnauth">
+      <p style="font-size: var(--fs-sm); color: var(--ink-500); margin-bottom: var(--s-3);">
+        You need to authenticate with GitHub first. Open Settings to configure your OAuth credentials, then log in.
+      </p>
+      <button id="discussGoSettings" class="btn btn-secondary btn-sm">Open settings</button>
+    </div>
+    <!-- Auth state -->
+    <div id="discussAuth" class="hidden">
+      <p style="font-size: var(--fs-sm); color: var(--ink-500); margin-bottom: var(--s-3);">
+        Authenticated as <strong id="discussLogin"></strong>
+      </p>
       <label for="ghFeedbackBody" class="field-label">Feedback for current card</label>
-      <textarea id="ghFeedbackBody" placeholder="What should change? Why?" style="min-height: 72px;"></textarea>
+      <textarea id="ghFeedbackBody" placeholder="What should change? Why?"></textarea>
       <div class="author-row" style="margin-top: var(--s-3);">
-        <button id="ghCreateDiscussionBtn" class="btn btn-primary btn-sm">Create discussion for this card</button>
+        <button id="ghCreateDiscussionBtn" class="btn btn-primary btn-sm">Create discussion</button>
       </div>
       <div class="gh-status" id="ghSubmitState"></div>
     </div>
-  </section>
-
-  <!-- ===== Author panel ===== -->
-  <section class="panel">
-    <div class="panel-head">
-      <div>
-        <div class="panel-title">Add a flashcard</div>
-        <div class="panel-sub">For upcoming features, customer objections, demo notes. Saved locally in your browser.</div>
-      </div>
-      <button class="panel-toggle" id="panelToggle" aria-expanded="true">
-        <span id="panelToggleLabel">Collapse</span>
-        <span id="panelToggleIcon">&minus;</span>
-      </button>
-    </div>
-    <div class="panel-body" id="panelBody">
-      <div class="grid">
-        <div>
-          <label for="newFront" class="field-label">Question · front</label>
-          <textarea id="newFront" placeholder="Example: Why use filtered steal instead of full steal in shared staging?"></textarea>
-        </div>
-        <div>
-          <label for="newBack" class="field-label">Answer · back</label>
-          <textarea id="newBack" placeholder="Explain what + why + step-by-step behavior + safety tradeoff."></textarea>
-        </div>
-      </div>
-      <div class="author-row">
-        <input id="newTags" type="text" placeholder="tags, comma separated (policy, staging, devrel)" />
-        <select id="newDifficulty">
-          <option value="1">difficulty 1</option>
-          <option value="2" selected>difficulty 2</option>
-          <option value="3">difficulty 3</option>
-          <option value="4">difficulty 4</option>
-          <option value="5">difficulty 5</option>
-        </select>
-        <select id="newTechnicality">
-          <option value="basic">basic</option>
-          <option value="intermediate" selected>intermediate</option>
-          <option value="advanced">advanced</option>
-        </select>
-        <button id="addCardBtn" class="btn btn-primary">Add card</button>
-      </div>
-      <div class="add-status" id="addCardStatus"></div>
-
-      <div class="io-row">
-        <label for="importProgressInput">Import progress</label>
-        <input id="importProgressInput" type="file" accept="application/json" />
-        <label for="importDeckInput">Import custom</label>
-        <input id="importDeckInput" type="file" accept="application/json" />
-        <button id="resetBtn" class="btn btn-again btn-sm">Reset progress</button>
-        <button id="clearCustomBtn" class="btn btn-again btn-sm">Delete custom</button>
-      </div>
-    </div>
-  </section>
-
-  <footer class="footer">
-    Built with <em>cloudforge</em> design system · answer in the order: what &rarr; why &rarr; step-by-step &rarr; safety.
-  </footer>
+  </div>
 </div>
 
 <script>
   // ================================================================
-  // Merged logic: PR #2 features (profiles, GitHub Discussions,
-  // tooltips, technicality) + PR #3 Cloudforge rendering shell.
-  // Storage keys match PR #2 (v4) for forward compatibility.
+  // Merged logic: profiles, GitHub Discussions, tooltips,
+  // spaced repetition, streak tracking, settings panel, modal.
+  // Storage keys match v4 for forward compatibility.
   // ================================================================
   const STORAGE_KEY = 'mirrord_flashcards_progress_v4';
   const PREFS_KEY = 'mirrord_flashcards_prefs_v4';
   const CUSTOM_DECK_KEY = 'mirrord_flashcards_custom_cards_v1';
   const GH_AUTH_KEY = 'mirrord_flashcards_github_auth_v1';
   const GH_CFG_KEY = 'mirrord_flashcards_github_cfg_v1';
+  const STREAK_KEY = 'mirrord_flashcards_streaks_v1';
 
   const state = {
     baseCards: [],
@@ -592,9 +676,9 @@
     includeNew: true,
     tag: 'all',
     source: 'all',
-    technicality: 'all',
     activeProfile: 'none',
-    gh: { token: '', login: '', cfg: { clientId: '', repo: '', categoryId: '', scopes: 'public_repo' } }
+    gh: { token: '', login: '', cfg: { clientId: '', repo: '', categoryId: '', scopes: 'public_repo' } },
+    streaks: { studyDays: [], currentStreak: 0, longestStreak: 0 }
   };
 
   const GLOSSARY = {
@@ -634,12 +718,7 @@
     shuffleBtn: document.getElementById('shuffleBtn'),
     tagFilter: document.getElementById('tagFilter'),
     sourceFilter: document.getElementById('sourceFilter'),
-    technicalityFilter: document.getElementById('technicalityFilter'),
     profileSelect: document.getElementById('profileSelect'),
-    applyProfileBtn: document.getElementById('applyProfileBtn'),
-    clearProfileBtn: document.getElementById('clearProfileBtn'),
-    profileDescription: document.getElementById('profileDescription'),
-    profileCoverage: document.getElementById('profileCoverage'),
     importProgressInput: document.getElementById('importProgressInput'),
     importDeckInput: document.getElementById('importDeckInput'),
     exportDeckBtn: document.getElementById('exportDeckBtn'),
@@ -653,13 +732,11 @@
     clearCustomBtn: document.getElementById('clearCustomBtn'),
     cardWrap: document.getElementById('cardWrap'),
     actions: document.getElementById('actions'),
-    panelToggle: document.getElementById('panelToggle'),
-    panelBody: document.getElementById('panelBody'),
-    panelToggleLabel: document.getElementById('panelToggleLabel'),
-    panelToggleIcon: document.getElementById('panelToggleIcon'),
     tooltipHint: document.getElementById('tooltipHint'),
     termChips: document.getElementById('termChips'),
     termTooltip: document.getElementById('termTooltip'),
+    discussLink: document.getElementById('discussLink'),
+    // GitHub
     ghClientId: document.getElementById('ghClientId'),
     ghRepo: document.getElementById('ghRepo'),
     ghCategoryId: document.getElementById('ghCategoryId'),
@@ -674,10 +751,23 @@
     ghFeedbackBody: document.getElementById('ghFeedbackBody'),
     ghCreateDiscussionBtn: document.getElementById('ghCreateDiscussionBtn'),
     ghSubmitState: document.getElementById('ghSubmitState'),
-    ghPanelToggle: document.getElementById('ghPanelToggle'),
-    ghPanelBody: document.getElementById('ghPanelBody'),
-    ghPanelToggleLabel: document.getElementById('ghPanelToggleLabel'),
-    ghPanelToggleIcon: document.getElementById('ghPanelToggleIcon')
+    // Settings panel
+    settingsToggle: document.getElementById('settingsToggle'),
+    settingsPanel: document.getElementById('settingsPanel'),
+    settingsBackdrop: document.getElementById('settingsBackdrop'),
+    settingsClose: document.getElementById('settingsClose'),
+    // Discussion modal
+    discussBackdrop: document.getElementById('discussBackdrop'),
+    discussModal: document.getElementById('discussModal'),
+    discussClose: document.getElementById('discussClose'),
+    discussUnauth: document.getElementById('discussUnauth'),
+    discussAuth: document.getElementById('discussAuth'),
+    discussLogin: document.getElementById('discussLogin'),
+    discussGoSettings: document.getElementById('discussGoSettings'),
+    // Streak
+    streakBadge: document.getElementById('streakBadge'),
+    streakCount: document.getElementById('streakCount'),
+    streakTooltip: document.getElementById('streakTooltip')
   };
 
   const todayStr = () => new Date().toISOString().slice(0, 10);
@@ -710,13 +800,12 @@
     state.includeNew = p.includeNew ?? true;
     state.tag = p.tag ?? 'all';
     state.source = p.source ?? 'all';
-    state.technicality = p.technicality ?? 'all';
     state.activeProfile = p.activeProfile ?? 'none';
   }
   function savePrefs() {
     saveJSON(PREFS_KEY, {
       includeNew: state.includeNew, tag: state.tag, source: state.source,
-      technicality: state.technicality, activeProfile: state.activeProfile
+      activeProfile: state.activeProfile
     });
   }
 
@@ -730,20 +819,35 @@
     ];
   }
 
+  // ===== Profile matching =====
   function getProfile() { return state.profiles.find(p => p.id === state.activeProfile) || null; }
-  function cardMatchesProfile(c) {
-    const p = getProfile();
-    if (!p) return true;
-    const m = p.match || {};
-    const tags = new Set(c.tags || []);
-    const audiences = new Set(c.audiences || []);
+
+  function cardMatchesProfileDef(card, profileDef) {
+    if (!profileDef) return true;
+    const m = profileDef.match || {};
+    const tags = new Set(card.tags || []);
+    const audiences = new Set(card.audiences || []);
     const req = m.requireAnyTags || [];
     const tech = m.allowedTechnicality || [];
     const aud = m.includeAudiences || [];
+    const excl = m.excludeTags || [];
     const tagOK = !req.length || req.some(t => tags.has(t));
-    const techOK = !tech.length || tech.includes(c.technicality || 'intermediate');
+    const techOK = !tech.length || tech.includes(card.technicality || 'intermediate');
     const audOK = !aud.length || aud.some(a => audiences.has(a));
-    return tagOK && techOK && audOK;
+    const exclOK = !excl.length || !excl.some(t => tags.has(t));
+    return tagOK && techOK && audOK && exclOK;
+  }
+
+  function cardMatchesProfile(c) {
+    return cardMatchesProfileDef(c, getProfile());
+  }
+
+  function profileProgress(profileId) {
+    const prof = state.profiles.find(p => p.id === profileId);
+    if (!prof) return { studied: 0, total: state.cards.length, pct: 0 };
+    const matching = state.cards.filter(c => cardMatchesProfileDef(c, prof));
+    const studied = matching.filter(c => state.progress[c.id]?.reps > 0);
+    return { studied: studied.length, total: matching.length, pct: matching.length ? Math.round(studied.length / matching.length * 100) : 0 };
   }
 
   function isDue(p) { return p.due <= todayStr(); }
@@ -751,8 +855,7 @@
   function cardMatchesFilters(card) {
     const tagOk = state.tag === 'all' || (card.tags || []).includes(state.tag);
     const sourceOk = state.source === 'all' || card.source === state.source;
-    const techOk = state.technicality === 'all' || (card.technicality || 'intermediate') === state.technicality;
-    return tagOk && sourceOk && techOk && cardMatchesProfile(card);
+    return tagOk && sourceOk && cardMatchesProfile(card);
   }
 
   function buildQueue() {
@@ -767,7 +870,6 @@
     state.queue.sort((a, b) => state.progress[a.id].due.localeCompare(state.progress[b.id].due));
     state.idx = 0;
     state.initialQueueLen = state.queue.length;
-    renderProfileCoverage();
   }
 
   function shuffleQueue() {
@@ -778,28 +880,85 @@
     state.idx = 0;
   }
 
+  // ===== Streak tracking =====
+  function loadStreaks() {
+    state.streaks = loadJSON(STREAK_KEY, { studyDays: [], currentStreak: 0, longestStreak: 0 });
+  }
+  function saveStreaks() { saveJSON(STREAK_KEY, state.streaks); }
+
+  function recordStudyDay() {
+    const today = todayStr();
+    if (state.streaks.studyDays.includes(today)) return;
+    state.streaks.studyDays.push(today);
+    state.streaks.studyDays.sort();
+    recalcStreaks();
+    saveStreaks();
+    renderStreak();
+  }
+
+  function recalcStreaks() {
+    const days = [...new Set(state.streaks.studyDays)].sort().reverse();
+    if (!days.length) {
+      state.streaks.currentStreak = 0;
+      state.streaks.longestStreak = 0;
+      return;
+    }
+    // current streak: count consecutive days ending at today or yesterday
+    const today = new Date(todayStr());
+    let current = 0;
+    let check = new Date(today);
+    // allow today or if today not studied yet, start from yesterday
+    const todayS = todayStr();
+    if (!days.includes(todayS)) {
+      check.setDate(check.getDate() - 1);
+    }
+    const daySet = new Set(days);
+    while (daySet.has(check.toISOString().slice(0, 10))) {
+      current++;
+      check.setDate(check.getDate() - 1);
+    }
+    state.streaks.currentStreak = current;
+
+    // longest streak
+    let longest = 0, run = 1;
+    const sorted = [...daySet].sort();
+    for (let i = 1; i < sorted.length; i++) {
+      const prev = new Date(sorted[i - 1]);
+      const cur = new Date(sorted[i]);
+      const diff = (cur - prev) / (1000 * 60 * 60 * 24);
+      if (diff === 1) { run++; }
+      else { longest = Math.max(longest, run); run = 1; }
+    }
+    longest = Math.max(longest, run);
+    state.streaks.longestStreak = longest;
+  }
+
+  function daysStudiedThisWeek() {
+    const today = new Date(todayStr());
+    const dayOfWeek = today.getDay(); // 0=Sun
+    const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const monday = new Date(today);
+    monday.setDate(monday.getDate() - mondayOffset);
+    const mondayStr = monday.toISOString().slice(0, 10);
+    return state.streaks.studyDays.filter(d => d >= mondayStr && d <= todayStr()).length;
+  }
+
+  function renderStreak() {
+    el.streakCount.textContent = state.streaks.currentStreak;
+    el.streakTooltip.textContent = `Current: ${state.streaks.currentStreak} days | Best: ${state.streaks.longestStreak} days | This week: ${daysStudiedThisWeek()}/7`;
+  }
+
   // ===== Profile rendering =====
   function renderProfileSelector() {
     el.profileSelect.innerHTML = '<option value="none">none</option>';
     for (const p of state.profiles) {
+      const prog = profileProgress(p.id);
       const o = document.createElement('option');
-      o.value = p.id; o.textContent = p.name;
+      o.value = p.id;
+      o.textContent = `${p.name} (${prog.pct}%)`;
       o.selected = p.id === state.activeProfile;
       el.profileSelect.appendChild(o);
     }
-    renderProfileDescription();
-  }
-  function renderProfileDescription() {
-    const p = getProfile();
-    el.profileDescription.textContent = p
-      ? `${p.name}: ${p.description}`
-      : 'No active profile. Using global filters only.';
-  }
-  function renderProfileCoverage() {
-    const total = state.cards.length;
-    const matching = state.cards.filter(cardMatchesFilters).length;
-    el.profileCoverage.textContent = `Active set: ${matching}/${total} cards` +
-      (state.activeProfile !== 'none' ? ` (profile: ${state.activeProfile})` : '') + '.';
   }
 
   function renderTagFilter() {
@@ -813,7 +972,6 @@
       el.tagFilter.appendChild(opt);
     });
     el.sourceFilter.value = state.source;
-    el.technicalityFilter.value = state.technicality;
     el.profileSelect.value = state.activeProfile;
   }
 
@@ -904,7 +1062,7 @@
       </div>
       <div class="flashcard-body">
         <div class="eyebrow" id="eyebrow">Question</div>
-        <div class="prompt" id="front">—</div>
+        <div class="prompt" id="front">&mdash;</div>
         <div class="answer" id="back"></div>
         <div class="chips" id="tags"></div>
         <div class="tooltip-hint" id="tooltipHint"></div>
@@ -919,10 +1077,12 @@
           <button id="goodBtn"  class="btn btn-good">Good</button>
           <button id="easyBtn"  class="btn btn-good" style="background:#D4EEDC; border-color: var(--success); color: #145635;">Easy</button>
         </div>
+        <button class="discuss-link" id="discussLink">Discuss this card</button>
       </div>`;
     el.tooltipHint = document.getElementById('tooltipHint');
     el.termChips = document.getElementById('termChips');
     el.termTooltip = document.getElementById('termTooltip');
+    el.discussLink = document.getElementById('discussLink');
     wireCardButtons();
   }
 
@@ -947,6 +1107,7 @@
     document.getElementById('hardBtn') ?.addEventListener('click', () => gradeCard('hard'));
     document.getElementById('goodBtn') ?.addEventListener('click', () => gradeCard('good'));
     document.getElementById('easyBtn') ?.addEventListener('click', () => gradeCard('easy'));
+    document.getElementById('discussLink')?.addEventListener('click', openDiscussModal);
   }
 
   function gradeCard(grade) {
@@ -971,6 +1132,7 @@
     }
     p.last = todayStr();
     saveJSON(STORAGE_KEY, state.progress);
+    recordStudyDay();
     state.queue.splice(state.idx, 1);
     if (state.idx >= state.queue.length) state.idx = Math.max(0, state.queue.length - 1);
     showCard();
@@ -985,6 +1147,7 @@
     updateButtons();
     mountCardChrome();
     showCard();
+    renderStreak();
   }
 
   function updateButtons() {
@@ -992,6 +1155,32 @@
     el.newModeBtn.classList.toggle('btn-primary', state.includeNew);
     el.newModeBtn.classList.toggle('btn-secondary', !state.includeNew);
     el.sourceFilter.value = state.source;
+  }
+
+  // ===== Settings panel toggle =====
+  function openSettings() {
+    el.settingsPanel.classList.add('visible');
+    el.settingsBackdrop.classList.add('visible');
+  }
+  function closeSettings() {
+    el.settingsPanel.classList.remove('visible');
+    el.settingsBackdrop.classList.remove('visible');
+  }
+
+  // ===== Discussion modal =====
+  function openDiscussModal() {
+    if (state.gh.token) {
+      el.discussUnauth.classList.add('hidden');
+      el.discussAuth.classList.remove('hidden');
+      el.discussLogin.textContent = `@${state.gh.login}`;
+    } else {
+      el.discussUnauth.classList.remove('hidden');
+      el.discussAuth.classList.add('hidden');
+    }
+    el.discussBackdrop.classList.add('visible');
+  }
+  function closeDiscussModal() {
+    el.discussBackdrop.classList.remove('visible');
   }
 
   // ===== GitHub integration =====
@@ -1165,7 +1354,7 @@
     try {
       state.profiles = await fetch('./profiles.json').then(r => r.json());
     } catch (e) {
-      console.warn('profiles.json not loaded — no profiles available', e);
+      console.warn('profiles.json not loaded - no profiles available', e);
       state.profiles = [];
     }
   }
@@ -1178,15 +1367,11 @@
   el.shuffleBtn.addEventListener('click', () => { shuffleQueue(); showCard(); });
   el.tagFilter.addEventListener('change', (e) => { state.tag = e.target.value; savePrefs(); buildQueue(); showCard(); });
   el.sourceFilter.addEventListener('change', (e) => { state.source = e.target.value; savePrefs(); buildQueue(); showCard(); });
-  el.technicalityFilter.addEventListener('change', (e) => { state.technicality = e.target.value; savePrefs(); buildQueue(); showCard(); });
 
-  el.applyProfileBtn.addEventListener('click', () => {
-    state.activeProfile = el.profileSelect.value;
-    savePrefs(); renderProfileDescription(); buildQueue(); showCard();
-  });
-  el.clearProfileBtn.addEventListener('click', () => {
-    state.activeProfile = 'none'; el.profileSelect.value = 'none';
-    savePrefs(); renderProfileDescription(); buildQueue(); showCard();
+  // Profile selection is immediate
+  el.profileSelect.addEventListener('change', (e) => {
+    state.activeProfile = e.target.value;
+    savePrefs(); buildQueue(); showCard(); renderProfileSelector();
   });
 
   el.exportBtn.addEventListener('click', () => {
@@ -1244,20 +1429,29 @@
     state.customCards = []; saveCustomCards(); refreshAll();
   });
 
-  // Author panel toggle
-  el.panelToggle.addEventListener('click', () => {
-    const collapsed = el.panelBody.classList.toggle('collapsed');
-    el.panelToggleLabel.textContent = collapsed ? 'Expand' : 'Collapse';
-    el.panelToggleIcon.textContent  = collapsed ? '+' : '\u2212';
-    el.panelToggle.setAttribute('aria-expanded', String(!collapsed));
+  // Settings panel
+  el.settingsToggle.addEventListener('click', openSettings);
+  el.settingsClose.addEventListener('click', closeSettings);
+  el.settingsBackdrop.addEventListener('click', closeSettings);
+
+  // Discussion modal
+  el.discussLink.addEventListener('click', openDiscussModal);
+  el.discussClose.addEventListener('click', closeDiscussModal);
+  el.discussBackdrop.addEventListener('click', (e) => {
+    if (e.target === el.discussBackdrop) closeDiscussModal();
+  });
+  el.discussGoSettings.addEventListener('click', () => {
+    closeDiscussModal();
+    openSettings();
   });
 
-  // GitHub panel toggle
-  el.ghPanelToggle.addEventListener('click', () => {
-    const collapsed = el.ghPanelBody.classList.toggle('collapsed');
-    el.ghPanelToggleLabel.textContent = collapsed ? 'Expand' : 'Collapse';
-    el.ghPanelToggleIcon.textContent  = collapsed ? '+' : '\u2212';
-    el.ghPanelToggle.setAttribute('aria-expanded', String(!collapsed));
+  // Streak badge tooltip toggle
+  el.streakBadge.addEventListener('click', (e) => {
+    e.stopPropagation();
+    el.streakTooltip.classList.toggle('visible');
+  });
+  document.addEventListener('click', () => {
+    el.streakTooltip.classList.remove('visible');
   });
 
   // GitHub event wiring
@@ -1293,10 +1487,11 @@
     try {
       await loadBase();
     } catch (e) {
-      console.warn('cards.json not loaded — empty deck', e);
+      console.warn('cards.json not loaded - empty deck', e);
     }
     loadPrefs();
     loadCustomCards();
+    loadStreaks();
     loadGitHubState();
     refreshAll();
     wireCardButtons();
