@@ -48,3 +48,11 @@ Open `http://localhost:8080`.
 - `.github/workflows/pages.yml` — deploy static app to GitHub Pages
 - `.github/workflows/weekly-discussion-digest.yml` — weekly discussion digest
 - `scripts/weekly_discussion_digest.sh` — digest generator
+
+
+## Conflict safety check
+
+A CI guard is included to fail fast if unresolved merge markers are committed:
+
+- `.github/workflows/conflict-marker-check.yml`
+- `scripts/check_conflict_markers.sh`

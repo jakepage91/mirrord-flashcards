@@ -1,0 +1,15 @@
+name: Conflict marker check
+
+on:
+  push:
+    branches: ["work", "main", "master"]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Check for merge conflict markers
+        run: ./scripts/check_conflict_markers.sh
